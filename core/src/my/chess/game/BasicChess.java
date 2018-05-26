@@ -1,10 +1,7 @@
 package my.chess.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.Game;
+import my.chess.ui.ChessStage;
 
 
 /*
@@ -25,29 +22,24 @@ Schackregler, kontroll av lagliga flyttningar, kontroll av vinst/förlust. Kontr
 */
 
 
-public class BasicChess extends ApplicationAdapter {
+public class BasicChess extends Game {
 
-	SpriteBatch batch;
-	Texture img;
+	
 	
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("chessboard.png");
+		setScreen(new ChessStage(this));
+		
+		// TODO add menu screen and it's MP connection thingies
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+		super.render(); // IMPORTANT, other screens won't render without this
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
-		img.dispose();
+	
 	}
 }
