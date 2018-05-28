@@ -71,7 +71,7 @@ public class MenuContoller {
 	    
 	    waitingForHost = true;
 	    
-	    //Listen to a string message saying "StartGame", have to use isInstance because of KryoNet
+	    //Listen to a string message saying "StartGame", have to use isInstance cast check because of KryoNet
 	    clientStartListener = new RunMethodListener<String>(String.class) {
 	    	@Override
 			public void run(Connection con, String object) {

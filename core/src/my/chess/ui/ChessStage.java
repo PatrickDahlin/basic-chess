@@ -51,6 +51,7 @@ public class ChessStage implements Screen {
 		batch.begin();
 		batch.draw(background, 0, 0);
 		
+		
 		// TODO draw chesspieces here
 		
 		batch.end();
