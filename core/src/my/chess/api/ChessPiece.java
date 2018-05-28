@@ -1,4 +1,4 @@
-package my.chess.logic;
+package my.chess.api;
 
 public class ChessPiece {
 

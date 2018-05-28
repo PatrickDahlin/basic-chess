@@ -5,6 +5,8 @@ import java.io.IOException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -39,11 +41,17 @@ public class NetworkTestingScreen implements Screen {
 	private VerticalGroup chatPane;
 	private TextField inputText;
 	
+	Texture background;
+	SpriteBatch batch;
+	
 	@Override
 	public void show() {
 		
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		stage = new Stage();
+		
+		batch = new SpriteBatch();
+		background = new Texture("chessboard.png");
 		
 		Gdx.input.setInputProcessor(stage);
 
@@ -206,7 +214,13 @@ public class NetworkTestingScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		batch.begin();
+		batch.draw(background,0,0);
+		batch.end();
+		
 		stage.act(Gdx.graphics.getDeltaTime());
+		
 		stage.draw();
 	}
 

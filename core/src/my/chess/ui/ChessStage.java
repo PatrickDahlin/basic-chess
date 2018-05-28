@@ -7,13 +7,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import my.chess.logic.ChessConnection;
+
 public class ChessStage implements Screen {
 
 	
 	Texture background;
 	SpriteBatch batch;
 	
-	public ChessStage(Game g)
+	
+	public ChessStage(Game g, ChessConnection connection)
 	{
 		batch = new SpriteBatch();
 		background = new Texture("chessboard.png");
@@ -47,6 +50,7 @@ public class ChessStage implements Screen {
 		
 		batch.begin();
 		batch.draw(background, 0, 0);
+		
 		
 		// TODO draw chesspieces here
 		

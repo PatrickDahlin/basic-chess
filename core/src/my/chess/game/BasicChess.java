@@ -5,7 +5,8 @@ import my.chess.ui.ChessMainMenu;
 
 
 /*
- Moment 1
+
+Moment 1
 Schackets underliggande datamodell: schackbrädan, pjäser med positioner, m.m.
 
 Moment 2
@@ -19,6 +20,7 @@ Datakommunikation mellan datorerna, dvs skicka och ta emot data, tolka data och 
 
 Moment 5
 Schackregler, kontroll av lagliga flyttningar, kontroll av vinst/förlust. Kontroll av vems tur som är på gång, dvs den vars tur det inte är skall inte kunna flytta på pjäser. 
+
 */
 
 

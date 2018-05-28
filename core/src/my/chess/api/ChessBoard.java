@@ -1,6 +1,6 @@
-package my.chess.logic;
+package my.chess.api;
 
-import my.chess.logic.ChessPiece.ChessPieceType;
+import my.chess.api.ChessPiece.ChessPieceType;
 
 class ChessBoard {
 	
