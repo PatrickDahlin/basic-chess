@@ -1,7 +1,6 @@
 package my.chess.game;
 
 import com.badlogic.gdx.Game;
-
 import my.chess.ui.NetworkTestingScreen;
 
 
