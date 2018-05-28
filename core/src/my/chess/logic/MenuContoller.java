@@ -8,7 +8,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import my.chess.ui.ChessStage;
 
 public class MenuContoller {
 
@@ -20,6 +19,8 @@ public class MenuContoller {
 	private Listener clientStartListener;
 	
 	private Game game;
+	
+	private ChessUIController chessui;
 	
 	public MenuContoller(Game g)
 	{
@@ -100,8 +101,8 @@ public class MenuContoller {
 			connection.GetServer().sendToAllTCP("StartGame");
 		}
 		
-		game.setScreen(new ChessStage(game, connection));
-		
+		chessui = new ChessUIController(game, connection);
+
 		waitingForHost = false;
 	}
 	

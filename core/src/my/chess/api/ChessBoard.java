@@ -2,7 +2,7 @@ package my.chess.api;
 
 import my.chess.api.ChessPiece.ChessPieceType;
 
-class ChessBoard {
+public class ChessBoard {
 	
 	// 0,0 is in bottom left and player 1 is bottom white
 	ChessPiece[][] board; // 2D array of chesspieces, board[x][y] where x and y are 0 to 7 (8 "slots" in each direction)

@@ -11,6 +11,12 @@ public class DesktopLauncher {
 
 		config.width = 1280;
 		config.height = 960;
+		config.resizable = false;
+		config.foregroundFPS = 60;
+		config.backgroundFPS = 10;
+		config.samples = 4;
+		config.title = "Chess";
+		config.vSyncEnabled = false;
     
 		new LwjglApplication(new BasicChess(), config);
 	}

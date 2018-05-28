@@ -1,13 +1,12 @@
 package my.chess.ui;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import my.chess.logic.ChessConnection;
+import my.chess.logic.ChessUIController;
 
 public class ChessStage implements Screen {
 
@@ -15,12 +14,13 @@ public class ChessStage implements Screen {
 	Texture background;
 	SpriteBatch batch;
 	
+	private ChessUIController controller;
 	
-	public ChessStage(Game g, ChessConnection connection)
+	public ChessStage(ChessUIController controller)
 	{
 		batch = new SpriteBatch();
 		background = new Texture("chessboard.png");
-	
+		this.controller = controller;
 		
 	}
 	
