@@ -72,7 +72,7 @@ public class ChessMainMenu implements Screen {
             }
         });
 
-        Label ipLabel = new Label("IP:PORT ",skin);
+        final Label ipLabel = new Label("IP:PORT ",skin);
         ipLabel.setColor(.5f, .5f, .5f, 1);
 
         ipField.setColor(.5f, .5f, .5f, 1);
@@ -84,6 +84,20 @@ public class ChessMainMenu implements Screen {
 
         TextButton connectBtn = new TextButton("Connect", skin, "default");
         connectBtn.setColor(.5f, .5f, .5f, 1);
+
+        connectBtn.addListener( new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                if(ipField.getText().trim().equals("")){
+                    System.out.println("Field is Empty!");
+                    textLabel.setText("Field is Empty!");
+                } else {
+                    System.out.println("Trying To Connect!");
+                    textLabel.setText("Trying To Connect!");
+                    String[] ip = ipField.getText().trim().split(":");
+                    controller.ConnectToGame(ip[0],ip[1]);
+                }
+            }
+        });
 
         textLabel.setColor(.5f, .5f, .5f, 1);
 
