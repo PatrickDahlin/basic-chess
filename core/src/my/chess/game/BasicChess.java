@@ -1,7 +1,8 @@
 package my.chess.game;
 
 import com.badlogic.gdx.Game;
-import my.chess.ui.ChessMainMenu;
+
+import my.chess.ui.ChessStage;
 
 
 /*
@@ -30,9 +31,9 @@ public class BasicChess extends Game {
 	
 	@Override
 	public void create () {
-		//setScreen(new ChessStage(this));
+		setScreen(new ChessStage(null));
 		//setScreen(new NetworkTestingScreen());
-        setScreen(new ChessMainMenu(this));
+        //setScreen(new ChessMainMenu(this));
 		// TODO add menu screen and it's MP connection thingies
 	}
 

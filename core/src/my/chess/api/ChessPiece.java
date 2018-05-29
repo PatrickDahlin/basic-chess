@@ -24,4 +24,8 @@ public class ChessPiece {
 	 */
 	public ChessPieceType GetPieceType() { return type; }
 	
+	/**
+	 * Player 1 has white color, player 2 has black
+	 */
+	public boolean isPieceWhite() { return playerOwner == 1; }
 }
