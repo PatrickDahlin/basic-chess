@@ -22,6 +22,7 @@ public class ChessUIController {
 		this.game = game;
 		this.connection = connection;	
 		chess = new ChessStage(this);
+		chessboard = new ChessBoard();
 		game.setScreen(chess);
 		
 		moveListener = new RunMethodListener<NetChessMove>(NetChessMove.class) {

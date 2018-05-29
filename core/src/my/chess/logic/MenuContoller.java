@@ -99,7 +99,9 @@ public class MenuContoller {
 		if(connection.isServer())
 		{
 			// We want to send StartGame to the other client letting it know we've started
+			System.out.println("sending start message to clients");
 			connection.GetServer().sendToAllTCP("StartGame");
+			
 		}
 		
 		chessui = new ChessUIController(game, connection);
