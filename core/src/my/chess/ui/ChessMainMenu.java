@@ -67,9 +67,11 @@ public class ChessMainMenu implements Screen {
         hostBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 if(portField.getText().trim().equals("")){
+                    portField.setColor(2, .5f, .5f, 1);
                     System.out.println("Field is Empty!");
                     textLabel.setText("Field is Empty!");
                 } else {
+                    portField.setColor(.5f, .5f, .5f, 1);
                     System.out.println("Trying to Host.");
                     textLabel.setText("Trying to Host.");
                     controller.HostGame(portField.getText());
@@ -94,9 +96,12 @@ public class ChessMainMenu implements Screen {
         connectBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 if(ipField.getText().trim().equals("")){
+                    ipField.setColor(2, .5f, .5f, 1);
                     System.out.println("Field is Empty!");
                     textLabel.setText("Field is Empty!");
+
                 } else {
+                    ipField.setColor(.5f, .5f, .5f, 1);
                     System.out.println("Trying To Connect!");
                     textLabel.setText("Trying To Connect!");
                     String[] ip = ipField.getText().trim().split(":");
