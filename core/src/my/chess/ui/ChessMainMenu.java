@@ -72,7 +72,7 @@ public class ChessMainMenu implements Screen {
             }
         });
 
-        final Label ipLabel = new Label("IP:PORT ",skin);
+        Label ipLabel = new Label("IP:PORT ",skin);
         ipLabel.setColor(.5f, .5f, .5f, 1);
 
         ipField.setColor(.5f, .5f, .5f, 1);
@@ -99,6 +99,15 @@ public class ChessMainMenu implements Screen {
             }
         });
 
+        TextButton startGameBtn = new TextButton("Start Game!", skin, "default");
+        startGameBtn.setColor(.5f, .5f, .5f, 1);
+
+        startGameBtn.addListener( new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                controller.StartGame();
+            }
+        });
+
         textLabel.setColor(.5f, .5f, .5f, 1);
 
         //Adds to groups
@@ -107,6 +116,7 @@ public class ChessMainMenu implements Screen {
 
         hostGroup.addActor(hostGroupSub);
         hostGroup.addActor(hostBtn);
+        hostGroup.addActor(startGameBtn);
 
         hostGroupSub.addActor(portLabel);
         hostGroupSub.addActor(portField);
