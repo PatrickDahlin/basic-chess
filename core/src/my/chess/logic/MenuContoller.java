@@ -52,6 +52,8 @@ public class MenuContoller {
 		return true;
 	}
 	
+	private boolean shouldStart = false;
+	
 	public boolean ConnectToGame(String ip, String port)
 	{
 		if(waitingForHost) return false;
@@ -80,7 +82,7 @@ public class MenuContoller {
 	    		if(object.equals("StartGame"))
 	    		{
 	    			myClient.removeListener(clientStartListener);
-	    			StartGame();
+	    			shouldStart = true;
 	    		}
 			}
 	    };
@@ -89,6 +91,12 @@ public class MenuContoller {
 	    
 	    
 		return true;
+	}
+	
+	public void Update()
+	{
+		if(shouldStart)
+			StartGame();
 	}
 	
 	/**

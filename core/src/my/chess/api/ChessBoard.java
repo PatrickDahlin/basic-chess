@@ -31,6 +31,7 @@ public class ChessBoard {
 		board = new ChessPiece[8][];
 		for(int i=0; i < 8; i++)
 		{
+			board[i] = new ChessPiece[8];
 			switch(i)
 			{
 			case 0:
