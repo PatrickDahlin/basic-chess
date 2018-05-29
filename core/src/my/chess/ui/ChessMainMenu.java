@@ -179,6 +179,7 @@ public class ChessMainMenu implements Screen {
         if(startGame == true){
             controller.StartGame();
         }
+        controller.Update();
     }
 
     @Override
