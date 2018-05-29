@@ -22,6 +22,7 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	Skin skin;
 	
 	Texture background;
+	Image bg;
 	
 	Texture pawnTex_w,	 pawnTex_b;
 	Texture rookTex_w,	 rookTex_b;
@@ -42,16 +43,22 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	private float boardSize = 960;
 	private float chessPieceSize = 100;
 	
-	SpriteBatch batch;
-	
 	private ChessUIController controller;
+	
+	private final int BG_Z = 0;
+	private final int CHESSPIECE_Z = 2;
 	
 	public ChessStage(ChessUIController controller)
 	{
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		stage = new Stage();
-		batch = new SpriteBatch();
+
 		background = new Texture("chessboard.png");
+		bg = new Image(background);
+		bg.setSize(800, 800);
+		bg.setZIndex(BG_Z);
+		stage.addActor(bg);
+		
 		this.controller = controller;
 		if(controller != null)
 			controller.GetChessBoard().AddChangeListener(this);
@@ -65,10 +72,6 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		batch.begin();
-		batch.draw(background, 0, 0, 800, 800);
-		batch.end();
 		
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
@@ -140,15 +143,17 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 
 	private void hideAllPieces()
 	{
-		//if(false) {
+		if(false) { // TODO Testing
 		pawn_w.setVisible(false);
+		}
+
 		rook_w.setVisible(false);
 		queen_w.setVisible(false);
 		king_w.setVisible(false);
 		bishop_w.setVisible(false);
 		knight_w.setVisible(false);
-		//}
-
+		
+		
 		pawn_b.setVisible(false);
 		rook_b.setVisible(false);
 		queen_b.setVisible(false);
@@ -165,19 +170,19 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	private void loadChessPieces()
 	{
 		
-		pawnTex_w = new Texture("white_pawn.png");//"chess_piece_2_white_pawn.png");
-		rookTex_w = new Texture("white_rook.png");//"chess_piece_2_white_rook.png");
-		queenTex_w = new Texture("white_queen.png");//"chess_piece_2_white_queen.png");
-		kingTex_w = new Texture("white_king.png");//"chess_piece_2_white_king.png");
-		bishopTex_w = new Texture("white_bishop.png");//"chess_piece_2_white_bishop.png");
-		knightTex_w = new Texture("white_knight.png");//"chess_piece_2_white_knight.png");
+		pawnTex_w = new Texture("white_pawn.png");
+		rookTex_w = new Texture("white_rook.png");
+		queenTex_w = new Texture("white_queen.png");
+		kingTex_w = new Texture("white_king.png");
+		bishopTex_w = new Texture("white_bishop.png");
+		knightTex_w = new Texture("white_knight.png");
 	
-		pawnTex_b = new Texture("black_pawn.png");//"chess_piece_2_black_pawn.png");
-		rookTex_b = new Texture("black_rook.png");//"chess_piece_2_black_rook.png");
-		queenTex_b = new Texture("black_queen.png");//"chess_piece_2_black_queen.png");
-		kingTex_b = new Texture("black_king.png");//"chess_piece_2_black_king.png");
-		bishopTex_b = new Texture("black_bishop.png");//"chess_piece_2_black_bishop.png");
-		knightTex_b = new Texture("black_knight.png");//"chess_piece_2_black_knight.png");
+		pawnTex_b = new Texture("black_pawn.png");
+		rookTex_b = new Texture("black_rook.png");
+		queenTex_b = new Texture("black_queen.png");
+		kingTex_b = new Texture("black_king.png");
+		bishopTex_b = new Texture("black_bishop.png");
+		knightTex_b = new Texture("black_knight.png");
 		
 		pawnTex_w.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		rookTex_w.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -194,19 +199,34 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		knightTex_b.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		
-		pawn_w = new Image(pawnTex_w);	pawn_w.setSize(chessPieceSize, chessPieceSize);
-		rook_w = new Image(rookTex_w);	rook_w.setSize(chessPieceSize, chessPieceSize);
-		queen_w = new Image(queenTex_w);queen_w.setSize(chessPieceSize, chessPieceSize);
-		king_w = new Image(kingTex_w);	king_w.setSize(chessPieceSize, chessPieceSize);
-		bishop_w = new Image(bishopTex_w);bishop_w.setSize(chessPieceSize, chessPieceSize);
-		knight_w = new Image(knightTex_w);knight_w.setSize(chessPieceSize, chessPieceSize);
+		pawn_w = new Image(pawnTex_w);		pawn_w.setSize(chessPieceSize, chessPieceSize);
+		rook_w = new Image(rookTex_w);		rook_w.setSize(chessPieceSize, chessPieceSize);
+		queen_w = new Image(queenTex_w);	queen_w.setSize(chessPieceSize, chessPieceSize);
+		king_w = new Image(kingTex_w);		king_w.setSize(chessPieceSize, chessPieceSize);
+		bishop_w = new Image(bishopTex_w);	bishop_w.setSize(chessPieceSize, chessPieceSize);
+		knight_w = new Image(knightTex_w);	knight_w.setSize(chessPieceSize, chessPieceSize);
 	
-		pawn_b = new Image(pawnTex_b);
-		rook_b = new Image(rookTex_b);
-		queen_b = new Image(queenTex_b);
-		king_b = new Image(kingTex_b);
-		bishop_b = new Image(bishopTex_b);
-		knight_b = new Image(knightTex_b);
+		pawn_b = new Image(pawnTex_b);		pawn_b.setSize(chessPieceSize, chessPieceSize);
+		rook_b = new Image(rookTex_b);		rook_b.setSize(chessPieceSize, chessPieceSize);
+		queen_b = new Image(queenTex_b);	queen_b.setSize(chessPieceSize, chessPieceSize);
+		king_b = new Image(kingTex_b);		king_b.setSize(chessPieceSize, chessPieceSize);
+		bishop_b = new Image(bishopTex_b);	bishop_b.setSize(chessPieceSize, chessPieceSize);
+		knight_b = new Image(knightTex_b);	knight_b.setSize(chessPieceSize, chessPieceSize);
+		
+		pawn_w.setZIndex(CHESSPIECE_Z);
+		rook_w.setZIndex(CHESSPIECE_Z);
+		queen_w.setZIndex(CHESSPIECE_Z);
+		king_w.setZIndex(CHESSPIECE_Z);
+		bishop_w.setZIndex(CHESSPIECE_Z);
+		knight_w.setZIndex(CHESSPIECE_Z);
+		
+		pawn_b.setZIndex(CHESSPIECE_Z);
+		rook_b.setZIndex(CHESSPIECE_Z);
+		queen_b.setZIndex(CHESSPIECE_Z);
+		king_b.setZIndex(CHESSPIECE_Z);
+		bishop_b.setZIndex(CHESSPIECE_Z);
+		knight_b.setZIndex(CHESSPIECE_Z);
+		
 		
 		stage.addActor(pawn_w);  
 		stage.addActor(rook_w);  
@@ -231,7 +251,6 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	@Override
 	public void dispose() {
 		background.dispose();
-		batch.dispose();
 		
 		// Dispose of all the chesspiece textures when not needed anymore
 		pawnTex_w.dispose();
