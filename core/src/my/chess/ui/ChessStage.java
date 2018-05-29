@@ -31,17 +31,10 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	Texture bishopTex_w, bishopTex_b;
 	Texture knightTex_w, knightTex_b;
 	
-	Image pawn_w,	 pawn_b;
-	Image rook_w,	 rook_b;
-	Image queen_w,	 queen_b;
-	Image king_w,	 king_b;
-	Image bishop_w, bishop_b;
-	Image knight_w, knight_b;
-	
-	private float boardPadX = 100;
-	private float boardPadY = 100;
+	private float boardPadX = 32;
+	private float boardPadY = 32;
 	private float boardSize = 960;
-	private float chessPieceSize = 100;
+	private float chessPieceSize = 92;
 	
 	private ChessUIController controller;
 	
@@ -75,14 +68,16 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
+		
+		drawChessPieces();
+		
 	}
 
-	private void updateChessPieces()
+	private void drawChessPieces()
 	{
 		ChessBoard cb = controller.GetChessBoard();
 		
-		hideAllPieces();
-		
+		stage.getBatch().begin();
 		for(int x = 0; x < 8; x++)
 		{
 			for(int y = 0; y < 8; y++)
@@ -90,79 +85,64 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 				// Check that we've got a chesspiece here
 				if(cb.GetChessPieceAt(x, y) == null) continue;
 				
-				Image tmp = null;
+				Texture tmp = null;
 				
 				// Find out which one
 				switch(cb.GetChessPieceAt(x, y).GetPieceType())
 				{
 				case Bishop:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = bishop_w;
+						tmp = bishopTex_w;
 					else
-						tmp = bishop_b;
+						tmp = bishopTex_b;
 					break;
 				case King:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = king_w;
+						tmp = kingTex_w;
 					else
-						tmp = king_b;
+						tmp = kingTex_b;
 					break;
 				case Knight:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = knight_w;
+						tmp = knightTex_w;
 					else
-						tmp = knight_b;
+						tmp = knightTex_b;
 					break;
 				case Pawn:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = pawn_w;
+						tmp = pawnTex_w;
 					else
-						tmp = pawn_b;
+						tmp = pawnTex_b;
 					break;
 				case Queen:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = queen_w;
+						tmp = queenTex_w;
 					else
-						tmp = queen_b;
+						tmp = queenTex_b;
 					break;
 				case Rook:
 					if(cb.GetChessPieceAt(x, y).isPieceWhite())
-						tmp = rook_w;
+						tmp = rookTex_w;
 					else
-						tmp = rook_b;
+						tmp = rookTex_b;
 					break;
 				default:
 					break;
 				}
 				
-				tmp.setPosition(x * chessPieceSize + boardPadX, y * chessPieceSize + boardPadY);
-				tmp.setVisible(true);
+				// Render it at it's grid position
+				
+				float tmpX = x * chessPieceSize + boardPadX;
+				float tmpY = y * chessPieceSize + boardPadY;
+				
+				stage.getBatch().draw(tmp, tmpX, tmpY, chessPieceSize, chessPieceSize);
 			}
 		}
-	}
-
-	private void hideAllPieces()
-	{
-		if(false) { // TODO Testing
-		pawn_w.setVisible(false);
-		}
-
-		rook_w.setVisible(false);
-		queen_w.setVisible(false);
-		king_w.setVisible(false);
-		bishop_w.setVisible(false);
-		knight_w.setVisible(false);
-		
-		
-		pawn_b.setVisible(false);
-		rook_b.setVisible(false);
-		queen_b.setVisible(false);
-		king_b.setVisible(false);
-		bishop_b.setVisible(false);
-		knight_b.setVisible(false);
-		
+		stage.getBatch().end();
 	}
 	
+
+
 	/**
 	 * Loads textures, creates actors and adds them to the stage
 	 * <br> We hide them since their position is not set yet
@@ -197,56 +177,11 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		kingTex_b.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopTex_b.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		knightTex_b.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		
-		pawn_w = new Image(pawnTex_w);		pawn_w.setSize(chessPieceSize, chessPieceSize);
-		rook_w = new Image(rookTex_w);		rook_w.setSize(chessPieceSize, chessPieceSize);
-		queen_w = new Image(queenTex_w);	queen_w.setSize(chessPieceSize, chessPieceSize);
-		king_w = new Image(kingTex_w);		king_w.setSize(chessPieceSize, chessPieceSize);
-		bishop_w = new Image(bishopTex_w);	bishop_w.setSize(chessPieceSize, chessPieceSize);
-		knight_w = new Image(knightTex_w);	knight_w.setSize(chessPieceSize, chessPieceSize);
 	
-		pawn_b = new Image(pawnTex_b);		pawn_b.setSize(chessPieceSize, chessPieceSize);
-		rook_b = new Image(rookTex_b);		rook_b.setSize(chessPieceSize, chessPieceSize);
-		queen_b = new Image(queenTex_b);	queen_b.setSize(chessPieceSize, chessPieceSize);
-		king_b = new Image(kingTex_b);		king_b.setSize(chessPieceSize, chessPieceSize);
-		bishop_b = new Image(bishopTex_b);	bishop_b.setSize(chessPieceSize, chessPieceSize);
-		knight_b = new Image(knightTex_b);	knight_b.setSize(chessPieceSize, chessPieceSize);
-		
-		pawn_w.setZIndex(CHESSPIECE_Z);
-		rook_w.setZIndex(CHESSPIECE_Z);
-		queen_w.setZIndex(CHESSPIECE_Z);
-		king_w.setZIndex(CHESSPIECE_Z);
-		bishop_w.setZIndex(CHESSPIECE_Z);
-		knight_w.setZIndex(CHESSPIECE_Z);
-		
-		pawn_b.setZIndex(CHESSPIECE_Z);
-		rook_b.setZIndex(CHESSPIECE_Z);
-		queen_b.setZIndex(CHESSPIECE_Z);
-		king_b.setZIndex(CHESSPIECE_Z);
-		bishop_b.setZIndex(CHESSPIECE_Z);
-		knight_b.setZIndex(CHESSPIECE_Z);
-		
-		
-		stage.addActor(pawn_w);  
-		stage.addActor(rook_w);  
-		stage.addActor(queen_w); 
-		stage.addActor(king_w);  
-		stage.addActor(bishop_w); 
-		stage.addActor(knight_w); 
-		
-		stage.addActor(pawn_b);  
-		stage.addActor(rook_b);  
-		stage.addActor(queen_b); 
-		stage.addActor(king_b);  
-		stage.addActor(bishop_b); 
-		stage.addActor(knight_b); 
-		
-		hideAllPieces();
 	}
 	
 	@Override public void show() { Gdx.input.setInputProcessor(stage); }
-	@Override public void OnChessBoardChange() { updateChessPieces(); }
+	@Override public void OnChessBoardChange() {  }
 	
 	@Override
 	public void dispose() {
