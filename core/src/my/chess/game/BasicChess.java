@@ -32,7 +32,7 @@ public class BasicChess extends Game {
 	
 	@Override
 	public void create () {
-		setScreen(new ChessStage(null));
+		//setScreen(new ChessStage(null));
 		//setScreen(new NetworkTestingScreen());
     setScreen(new ChessMainMenu(menuContoller));
     

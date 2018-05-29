@@ -31,6 +31,9 @@ public class ChessMainMenu implements Screen {
     private TextField portField = new TextField("",skin);
     private TextField ipField = new TextField("",skin);
     private Label textLabel = new Label("",skin);
+    private TextButton startGameBtn = new TextButton("Start Game!", skin, "default");
+
+    private boolean startGame = false;
 
     @Override
     public void show() {
@@ -38,7 +41,9 @@ public class ChessMainMenu implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        HorizontalGroup group = new HorizontalGroup();
+        HorizontalGroup HostConnGroup = new HorizontalGroup();
+
+        VerticalGroup GroupGroup = new VerticalGroup();
 
         VerticalGroup hostGroup = new VerticalGroup();
         hostGroup.padLeft(20);
@@ -56,7 +61,7 @@ public class ChessMainMenu implements Screen {
         connectGroupSub.padBottom(5);
 
 
-        TextButton hostBtn = new TextButton("Host Server", skin, "default");
+        final TextButton hostBtn = new TextButton("Host Server", skin, "default");
         hostBtn.setColor(.5f, .5f, .5f, 1);
 
         hostBtn.addListener( new ClickListener(){
@@ -68,6 +73,7 @@ public class ChessMainMenu implements Screen {
                     System.out.println("Trying to Host.");
                     textLabel.setText("Trying to Host.");
                     controller.HostGame(portField.getText());
+                    startGameBtn.setVisible(true);
                 }
             }
         });
@@ -99,24 +105,23 @@ public class ChessMainMenu implements Screen {
             }
         });
 
-        TextButton startGameBtn = new TextButton("Start Game!", skin, "default");
         startGameBtn.setColor(.5f, .5f, .5f, 1);
 
+        startGameBtn.setVisible(false);
         startGameBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
-                controller.StartGame();
+                startGame = true;
             }
         });
 
         textLabel.setColor(.5f, .5f, .5f, 1);
 
         //Adds to groups
-        group.addActor(hostGroup);
-        group.addActor(connectGroup);
+        HostConnGroup.addActor(hostGroup);
+        HostConnGroup.addActor(connectGroup);
 
         hostGroup.addActor(hostGroupSub);
         hostGroup.addActor(hostBtn);
-        hostGroup.addActor(startGameBtn);
 
         hostGroupSub.addActor(portLabel);
         hostGroupSub.addActor(portField);
@@ -127,13 +132,15 @@ public class ChessMainMenu implements Screen {
         connectGroupSub.addActor(ipLabel);
         connectGroupSub.addActor(ipField);
 
-        group.addActor(textLabel);
+        GroupGroup.addActor(HostConnGroup);
+        GroupGroup.addActor(textLabel);
+        GroupGroup.addActor(startGameBtn);
 
         //Adds to stage
         HorizontalGroup tmp = new HorizontalGroup();
         tmp.setFillParent(true);
 
-        tmp.addActor(group);
+        tmp.addActor(GroupGroup);
         stage.addActor(tmp);
     }
 
@@ -164,6 +171,9 @@ public class ChessMainMenu implements Screen {
         // TODO draw chesspieces here
         batch.end();
         stage.draw();
+        if(startGame == true){
+            controller.StartGame();
+        }
     }
 
     @Override
