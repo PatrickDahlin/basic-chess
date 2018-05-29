@@ -1,32 +1,39 @@
 package my.chess.ui;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import my.chess.logic.MenuContoller;
 
 public class ChessMainMenu implements Screen {
 
     Texture background;
     SpriteBatch batch;
+    private MenuContoller controller;
 
-    public ChessMainMenu(Game g)
+    public ChessMainMenu(MenuContoller ctrl)
     {
+        controller = ctrl;
         batch = new SpriteBatch();
         background = new Texture("background.jpg");
     }
 
     private Stage stage;
 
-    private Skin skin;
+    private Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+    private TextField portField = new TextField("",skin);
+    private TextField ipField = new TextField("",skin);
+    private Label textLabel = new Label("",skin);
 
     @Override
     public void show() {
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage();
 
         Gdx.input.setInputProcessor(stage);
@@ -52,22 +59,32 @@ public class ChessMainMenu implements Screen {
         TextButton hostBtn = new TextButton("Host Server", skin, "default");
         hostBtn.setColor(.5f, .5f, .5f, 1);
 
+        hostBtn.addListener( new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                if(portField.getText().trim().equals("")){
+                    System.out.println("Field is Empty!");
+                    textLabel.setText("Field is Empty!");
+                } else {
+                    System.out.println("Trying to Host.");
+                    textLabel.setText("Trying to Host.");
+                    controller.HostGame(portField.getText());
+                }
+            }
+        });
+
         Label ipLabel = new Label("IP:PORT ",skin);
         ipLabel.setColor(.5f, .5f, .5f, 1);
 
-        TextField ipField = new TextField("",skin);
         ipField.setColor(.5f, .5f, .5f, 1);
 
         Label portLabel = new Label("Port: ",skin);
         portLabel.setColor(.5f, .5f, .5f, 1);
 
-        TextField portField = new TextField("",skin);
         portField.setColor(.5f, .5f, .5f, 1);
 
         TextButton connectBtn = new TextButton("Connect", skin, "default");
         connectBtn.setColor(.5f, .5f, .5f, 1);
 
-        Label textLabel = new Label("",skin);
         textLabel.setColor(.5f, .5f, .5f, 1);
 
         //Adds to groups

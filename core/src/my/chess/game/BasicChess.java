@@ -1,6 +1,7 @@
 package my.chess.game;
 
 import com.badlogic.gdx.Game;
+import my.chess.logic.MenuContoller;
 import my.chess.ui.ChessMainMenu;
 
 
@@ -26,13 +27,13 @@ Schackregler, kontroll av lagliga flyttningar, kontroll av vinst/förlust. Kontr
 
 public class BasicChess extends Game {
 
-	
+    private MenuContoller menuContoller = new MenuContoller(this);
 	
 	@Override
 	public void create () {
 		//setScreen(new ChessStage(this));
 		//setScreen(new NetworkTestingScreen());
-        setScreen(new ChessMainMenu(this));
+        setScreen(new ChessMainMenu(menuContoller));
 		// TODO add menu screen and it's MP connection thingies
 	}
 
