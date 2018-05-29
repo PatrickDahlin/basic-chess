@@ -29,5 +29,6 @@ public class ChessConnection {
 	public Server GetServer() { return myServer; }
 	public Client GetClient() { return myClient; }
 	public boolean isServer() { return isServer; }
+	public int GetPlayerIndex() { return playerIndex; }
 	
 }

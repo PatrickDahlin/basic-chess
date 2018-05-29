@@ -68,6 +68,7 @@ public class NetworkTestingScreen implements Screen {
 		inputText.setWidth(400);
 		inputText.setHeight(50);
 		
+		
 		inputText.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode)

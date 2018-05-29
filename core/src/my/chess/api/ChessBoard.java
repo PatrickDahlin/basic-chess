@@ -1,5 +1,7 @@
 package my.chess.api;
 
+import java.util.ArrayList;
+
 import my.chess.api.ChessPiece.ChessPieceType;
 
 public class ChessBoard {
@@ -11,6 +13,10 @@ public class ChessBoard {
 	boolean isPlaying; // Flag unset if either player won and no more moves can be made until restart
 	int nextPlayerTurn = 1; // Player 1 => 1 (White), Player 2 => 2 (Black)
 
+	
+	private ArrayList<ChessBoardChangeListener> changeListeners = new ArrayList<ChessBoardChangeListener>();
+	
+	
 	public ChessBoard()
 	{
 		ResetBoard();
@@ -59,6 +65,10 @@ public class ChessBoard {
 		}
 		
 		isPlaying = true;
+		
+		// Fire changed event
+		for(ChessBoardChangeListener c : changeListeners)
+			c.OnChessBoardChange();
 	}
 	
 	/**
@@ -103,6 +113,10 @@ public class ChessBoard {
 		
 		board[toX][toY] = p;
 		
+		// Fire changed event
+		for(ChessBoardChangeListener c : changeListeners)
+			c.OnChessBoardChange();
+		
 		return true;
 	}
 	
@@ -117,4 +131,21 @@ public class ChessBoard {
 	
 	// TODO Win/Lost action with possibility to add listeners from outside, moves might trigger win/lost scenario
 	
+	/**
+	 * Add listener for changes made to the chessboard in the form of moves
+	 */
+	public void AddChangeListener(ChessBoardChangeListener l)
+	{
+		if(!changeListeners.contains(l))
+			changeListeners.add(l);
+	}
+	
+	/**
+	 * Removes a listened that has been added with AddChangeListener
+	 */
+	public void RemoveChangeListener(ChessBoardChangeListener l)
+	{
+		if(changeListeners.contains(l))
+			changeListeners.remove(l);
+	}
 }

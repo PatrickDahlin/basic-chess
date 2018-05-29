@@ -5,6 +5,7 @@ import my.chess.logic.MenuContoller;
 import my.chess.ui.ChessMainMenu;
 
 
+
 /*
 
 Moment 1
@@ -31,9 +32,10 @@ public class BasicChess extends Game {
 	
 	@Override
 	public void create () {
-		//setScreen(new ChessStage(this));
+		setScreen(new ChessStage(null));
 		//setScreen(new NetworkTestingScreen());
-        setScreen(new ChessMainMenu(menuContoller));
+    setScreen(new ChessMainMenu(menuContoller));
+    
 		// TODO add menu screen and it's MP connection thingies
 	}
 

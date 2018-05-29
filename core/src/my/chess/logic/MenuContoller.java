@@ -68,6 +68,7 @@ public class MenuContoller {
 			return false;
 		}
 	    
+	    
 	    connection = new ChessConnection(myClient);
 	    
 	    waitingForHost = true;
@@ -83,7 +84,7 @@ public class MenuContoller {
 	    		}
 			}
 	    };
-	    		
+	    
 	    myClient.addListener(clientStartListener);
 	    
 	    
