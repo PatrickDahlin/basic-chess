@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Align;
 
 public class ChessMainMenu implements Screen {
 
@@ -25,10 +24,6 @@ public class ChessMainMenu implements Screen {
 
     private Skin skin;
 
-    private VerticalGroup rightPane;
-    private VerticalGroup chatPane;
-    private TextField inputText;
-
     @Override
     public void show() {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -36,58 +31,68 @@ public class ChessMainMenu implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        rightPane = new VerticalGroup();
-        rightPane.setWidth(400);
-        rightPane.setHeight(400);
-        rightPane.align(Align.right);
+        HorizontalGroup group = new HorizontalGroup();
 
-        VerticalGroup group = new VerticalGroup();
-        group.setWidth(200);
-        group.setHeight(200);
-        group.align(Align.left);
+        VerticalGroup hostGroup = new VerticalGroup();
+        hostGroup.padLeft(20);
+
+        HorizontalGroup hostGroupSub = new HorizontalGroup();
+        hostGroupSub.padLeft(22);
+        hostGroupSub.padBottom(5);
+
+        VerticalGroup connectGroup = new VerticalGroup();
+        connectGroup.padLeft(20);
+        connectGroup.padRight(20);
+
+        HorizontalGroup connectGroupSub = new HorizontalGroup();
+        connectGroupSub.padLeft(22);
+        connectGroupSub.padBottom(5);
+
 
         TextButton hostBtn = new TextButton("Host Server", skin, "default");
-        hostBtn.setWidth(200);
-        hostBtn.setHeight(50);
         hostBtn.setColor(.5f, .5f, .5f, 1);
 
-        Label ipLabel = new Label("IP: ",skin);
-        ipLabel.setWidth(200);
-        ipLabel.setHeight(50);
+        Label ipLabel = new Label("IP:PORT ",skin);
         ipLabel.setColor(.5f, .5f, .5f, 1);
 
         TextField ipField = new TextField("",skin);
-        ipField.setWidth(200);
-        ipField.setHeight(50);
         ipField.setColor(.5f, .5f, .5f, 1);
 
-        Label portLabel = new Label("Port:  ",skin);
-        portLabel.setWidth(200);
-        portLabel.setHeight(50);
+        Label portLabel = new Label("Port: ",skin);
         portLabel.setColor(.5f, .5f, .5f, 1);
 
         TextField portField = new TextField("",skin);
-        portField.setWidth(200);
-        portField.setHeight(50);
         portField.setColor(.5f, .5f, .5f, 1);
 
-        TextButton connectBtn = new TextButton("Connect to local", skin, "default");
-        connectBtn.setWidth(200);
-        connectBtn.setHeight(50);
+        TextButton connectBtn = new TextButton("Connect", skin, "default");
         connectBtn.setColor(.5f, .5f, .5f, 1);
 
-        group.addActor(hostBtn);
-        group.addActor(ipLabel);
-        group.addActor(ipField);
-        group.addActor(portLabel);
-        group.addActor(portField);
-        group.addActor(connectBtn);
+        Label textLabel = new Label("",skin);
+        textLabel.setColor(.5f, .5f, .5f, 1);
 
+        //Adds to groups
+        group.addActor(hostGroup);
+        group.addActor(connectGroup);
+
+        hostGroup.addActor(hostGroupSub);
+        hostGroup.addActor(hostBtn);
+
+        hostGroupSub.addActor(portLabel);
+        hostGroupSub.addActor(portField);
+
+        connectGroup.addActor(connectGroupSub);
+        connectGroup.addActor(connectBtn);
+
+        connectGroupSub.addActor(ipLabel);
+        connectGroupSub.addActor(ipField);
+
+        group.addActor(textLabel);
+
+        //Adds to stage
         HorizontalGroup tmp = new HorizontalGroup();
         tmp.setFillParent(true);
-        tmp.addActor(group);
-        tmp.addActor(rightPane);
 
+        tmp.addActor(group);
         stage.addActor(tmp);
     }
 
