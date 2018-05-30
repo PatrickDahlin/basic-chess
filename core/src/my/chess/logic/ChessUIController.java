@@ -1,5 +1,7 @@
 package my.chess.logic;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Game;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -15,6 +17,7 @@ public class ChessUIController {
 	private ChessStage chess;
 	private ChessBoard chessboard;
 	
+	private ArrayList<int[]> selectedPieceMoves = null;
 	private boolean selectedPiece = false;
 	private int selectedX = -1;
 	private int selectedY = -1;
@@ -96,6 +99,8 @@ public class ChessUIController {
 				selectedPiece = true;
 				selectedX = boardX;
 				selectedY = boardY;
+				
+				// TODO @Unimplemeted  selectedPieceMoves = chessboard.getmoves(selectedX,selectedY);
 			}
 			else if(selected.GetPlayerIndex() != connection.GetPlayerIndex())
 			{
@@ -107,6 +112,10 @@ public class ChessUIController {
 					// TODO @unimplemented ignore this move until implemeted
 					System.out.println("Tried eating piece @unimplemented");
 				}
+				selectedPiece = false;
+				selectedX = -1;
+				selectedY = -1;
+				selectedPieceMoves = null;
 				//else We selected other players chesspiece which does nothing	
 			}
 		}
@@ -120,6 +129,7 @@ public class ChessUIController {
 				selectedPiece = false;
 				selectedX = -1;
 				selectedY = -1;
+				selectedPieceMoves = null;
 			}
 		}
 	}
@@ -159,6 +169,8 @@ public class ChessUIController {
 	{
 		
 	}
+	
+	public ArrayList<int[]> GetLegalMovesForSelection() { return selectedPieceMoves; }
 	
 	public ChessBoard GetChessBoard() { return chessboard; }
 	

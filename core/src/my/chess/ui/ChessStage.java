@@ -57,14 +57,13 @@ public class ChessStage implements Screen {
 		bg.setSize(1280, 960);
 		stage.addActor(bg);
 		
-		turnText = new Label("AAAAA", skin);
+		turnText = new Label("", skin);
 		turnText.setPosition(640, 910);
 		turnText.setFontScale(3.0f);
 		turnText.setColor(1,1,1,1);
 		turnText.setAlignment(Align.center);
 		turnText.setVisible(true);
 		turnText.setZIndex(1);
-		turnText.setText("Sample text");
 		stage.addActor(turnText);
 		
 		cb = new Image(chessboard);
