@@ -151,15 +151,16 @@ public class ChessBoard {
 			changeListeners.remove(l);
 	}
 
-    public void GetLegalMoves(int x, int y, ChessPieceType type, int color){
+    public ArrayList<int[]> GetLegalMoves(int x, int y, ChessPieceType type, int color){
 
         ArrayList<int[]> offsets = new ArrayList<int[]>(); //HOW THE PIECE IS ABLE TO MOVE
         int moveLength;
 
 	    switch (type){
             case Pawn:
-                //@TODO Make unique method to check for pawn movement?
-                break;
+
+                return pawnMoves(x, y, color);
+
             case Bishop:
 
                 moveLength = 7;
@@ -167,9 +168,8 @@ public class ChessBoard {
                 offsets.add(new int[]{1,-1});
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
-                break;
             case King:
 
                 moveLength = 1;
@@ -181,9 +181,8 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
-                break;
             case Queen:
 
                 moveLength = 7;
@@ -195,9 +194,8 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
-                break;
             case Rook:
 
                 moveLength = 7;
@@ -205,9 +203,8 @@ public class ChessBoard {
                 offsets.add(new int[]{0,1});
                 offsets.add(new int[]{0,-1});
                 offsets.add(new int[]{-1,0});
-                checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
-                break;
             case Knight:
 
                 ArrayList<int[]> moves = new ArrayList<int[]>();
@@ -219,12 +216,96 @@ public class ChessBoard {
                 moves.add(new int[]{x-1,y+2});
                 moves.add(new int[]{x+1,y-2});
                 moves.add(new int[]{x-1,y-2});
-                checkLegal(moves,color);
+                return checkLegal(moves,color);
+
+            default:
+
+                return new ArrayList<int[]>();//I put this here to make missing return statement dissapear ;D
+
+        }
+
+    }
+
+    private ArrayList<int[]> pawnMoves(int x, int y, int color){
+
+	    ArrayList<int[]> pawnMoves = new ArrayList<int[]>();
+
+	    //Assuming that the black side starts on "top" y=7 and the white side starts on bottom y=0
+        switch (color){
+            case 1:
+
+                //If player is White
+                if(isWithinBoard(x,y + 1)) {
+                    if (GetChessPieceAt(x, y + 1) != null) {
+                        pawnMoves.add(new int[]{x, y + 1});
+                        if (y == 1) {
+                            if (GetChessPieceAt(x, y + 2) != null) {
+                                pawnMoves.add(new int[]{x, y + 2});
+                            }
+                        }
+                    }
+                }
+
+                //If enemy piece at x-1 or x+1 and y+1 pawn is able to eat it
+                if(isWithinBoard(x + 1, y + 1)) {
+                    if (GetChessPieceAt(x + 1, y + 1) == null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
+                        if (tmpPiece.playerOwner != color) {
+                            pawnMoves.add(new int[]{x + 1, y + 1});
+                        }
+                    }
+                }
+
+                if(isWithinBoard(x - 1, y + 1)) {
+                    if (GetChessPieceAt(x - 1, y + 1) == null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
+                        if (tmpPiece.playerOwner != color) {
+                            pawnMoves.add(new int[]{x + 1, y + 1});
+                        }
+                    }
+                }
+
+                break;
+            case 2:
+
+                //If player is Black
+                if(isWithinBoard(x,y - 1)) {
+                    if (GetChessPieceAt(x, y - 1) != null) {
+                        pawnMoves.add(new int[]{x, y - 1});
+                        if (y == 6) {
+                            if (GetChessPieceAt(x, y - 2) != null) {
+                                pawnMoves.add(new int[]{x, y - 2});
+                            }
+                        }
+                    }
+                }
+
+                //If enemy piece at x-1 or x+1 and y+1 pawn is able to eat it
+                if(isWithinBoard(x + 1, y - 1)) {
+                    if (GetChessPieceAt(x + 1, y - 1) == null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
+                        if (tmpPiece.playerOwner != color) {
+                            pawnMoves.add(new int[]{x + 1, y - 1});
+                        }
+                    }
+                }
+
+                if(isWithinBoard(x - 1, y - 1)) {
+                    if (GetChessPieceAt(x - 1, y - 1) == null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
+                        if (tmpPiece.playerOwner != color) {
+                            pawnMoves.add(new int[]{x + 1, y - 1});
+                        }
+                    }
+                }
 
                 break;
             default:
                 break;
+
         }
+
+        return pawnMoves;
 
     }
 
