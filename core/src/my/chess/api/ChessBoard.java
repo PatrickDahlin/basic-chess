@@ -3,6 +3,7 @@ package my.chess.api;
 import my.chess.api.ChessPiece.ChessPieceType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ChessBoard {
 	
@@ -150,14 +151,14 @@ public class ChessBoard {
 			changeListeners.remove(l);
 	}
 
-    public void GetLegalMoves(int x, int y, ChessPieceType type){
+    public void GetLegalMoves(int x, int y, ChessPieceType type, int color){
 
-        ArrayList<int[]> legalMoves = new ArrayList<int[]>(); //MOVES THAT ARE LEGAL
         ArrayList<int[]> offsets = new ArrayList<int[]>(); //HOW THE PIECE IS ABLE TO MOVE
         int moveLength;
 
 	    switch (type){
             case Pawn:
+                //@TODO Make unique method to check for pawn movement?
                 break;
             case Bishop:
 
@@ -166,7 +167,7 @@ public class ChessBoard {
                 offsets.add(new int[]{1,-1});
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+                checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
                 break;
             case King:
@@ -180,7 +181,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+                checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
                 break;
             case Queen:
@@ -194,7 +195,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+                checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
                 break;
             case Rook:
@@ -204,10 +205,22 @@ public class ChessBoard {
                 offsets.add(new int[]{0,1});
                 offsets.add(new int[]{0,-1});
                 offsets.add(new int[]{-1,0});
-                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+                checkLegal(offsetMove(x, y, offsets, moveLength), color);
 
                 break;
             case Knight:
+
+                ArrayList<int[]> moves = new ArrayList<int[]>();
+                moves.add(new int[]{x+2,y+1});
+                moves.add(new int[]{x+2,y-1});
+                moves.add(new int[]{x-2,y+1});
+                moves.add(new int[]{x-2,y-1});
+                moves.add(new int[]{x+1,y+2});
+                moves.add(new int[]{x-1,y+2});
+                moves.add(new int[]{x+1,y-2});
+                moves.add(new int[]{x-1,y-2});
+                checkLegal(moves,color);
+
                 break;
             default:
                 break;
@@ -251,7 +264,38 @@ public class ChessBoard {
 
     }
 
-    private void checkLegal(ArrayList<int[]> moves, int color){
+    private ArrayList<int[]> checkLegal(ArrayList<int[]> moves, int color){
+
+	    ArrayList<Integer> nonLegalIndex = new ArrayList<Integer>();
+
+	    for(int i = 0; i != moves.size(); i++){
+
+            int x,y;
+            x = moves.get(i)[0];
+            y = moves.get(i)[1];
+
+            if(!isWithinBoard(x,y)){ //Checks if its within board
+                nonLegalIndex.add(i);
+                continue;
+            }
+
+            ChessPiece targetedPiece = GetChessPieceAt(x,y);
+
+            if(targetedPiece.playerOwner == color){
+                nonLegalIndex.add(i);
+                continue;
+            }
+
+        }
+
+        //Removes illegal moves from move array
+        Collections.sort(nonLegalIndex, Collections.<Integer>reverseOrder()); //Sorts Illegal index list so the arraylist removes the highest indexes first
+
+        for(int i = 0; i != nonLegalIndex.size(); i++){
+            moves.remove(nonLegalIndex.get(i));
+        }
+
+        return moves;
 
     }
 
