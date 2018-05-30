@@ -1,5 +1,6 @@
 package my.chess.ui;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -7,8 +8,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+
 import my.chess.logic.MenuContoller;
 
 public class ChessMainMenu implements Screen {
@@ -68,13 +77,27 @@ public class ChessMainMenu implements Screen {
             public void clicked(InputEvent event, float x, float y){
                 if(portField.getText().trim().equals("")){
                     portField.setColor(2, .5f, .5f, 1);
-                    System.out.println("Field is Empty!");
                     textLabel.setText("Field is Empty!");
                 } else {
                     portField.setColor(.5f, .5f, .5f, 1);
-                    System.out.println("Trying to Host.");
-                    textLabel.setText("Trying to Host.");
-                    controller.HostGame(portField.getText());
+                    
+                    textLabel.setText("Starting server...");
+                    boolean success = controller.HostGame(portField.getText());
+                    
+                    if(success)
+                    {	
+                    	textLabel.setText("Waiting for player to join...");
+                    	controller.AddClientConnectedListener(new Listener() {
+                    		@Override
+							public void connected(Connection arg0) {
+                    			textLabel.setText("Client connected!");
+                    			System.out.println("Client connected!");
+                    		}
+                    	});
+                    } 
+                    else
+                    	textLabel.setText("Hosting failed! Try again");
+                    
                     startGameBtn.setVisible(true);
                 }
             }
@@ -95,17 +118,23 @@ public class ChessMainMenu implements Screen {
 
         connectBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
-                if(ipField.getText().trim().equals("")){
+                String cleaned = ipField.getText().trim();
+                
+            	if(cleaned.equals("")){
                     ipField.setColor(2, .5f, .5f, 1);
-                    System.out.println("Field is Empty!");
-                    textLabel.setText("Field is Empty!");
-
+                    textLabel.setText("IP is Empty!");
+                } else if(cleaned.split(":").length < 2) {
+                    ipField.setColor(2, .5f, .5f, 1);
+                	textLabel.setText("You need to specify a port to connect to!");
                 } else {
                     ipField.setColor(.5f, .5f, .5f, 1);
-                    System.out.println("Trying To Connect!");
-                    textLabel.setText("Trying To Connect!");
-                    String[] ip = ipField.getText().trim().split(":");
-                    controller.ConnectToGame(ip[0],ip[1]);
+                    textLabel.setText("Connecting...");
+                    String[] ip = cleaned.split(":");
+                    boolean success = controller.ConnectToGame(ip[0],ip[1]);
+                    if(success)
+                    	textLabel.setText("Connected! Waiting for host...");
+                    else
+                    	textLabel.setText("Failed to connect!");
                 }
             }
         });
@@ -115,7 +144,11 @@ public class ChessMainMenu implements Screen {
         startGameBtn.setVisible(false);
         startGameBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
-                startGame = true;
+            	startGame = true;
+            	if(controller.isHostAndHasClientConnection())
+            		startGame = true;
+            	else
+            		textLabel.setText("No client is connected!");
             }
         });
 
@@ -149,20 +182,11 @@ public class ChessMainMenu implements Screen {
         stage.addActor(tmp);
     }
 
-    @Override
-    public void resize(int width, int height) {
+    @Override public void resize(int width, int height) { }
 
-    }
+    @Override public void pause() { }
 
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
+    @Override public void resume() { }
 
     @Override
     public void render(float delta) {
@@ -176,16 +200,13 @@ public class ChessMainMenu implements Screen {
         // TODO draw chesspieces here
         batch.end();
         stage.draw();
-        if(startGame == true){
+        if(controller.isHosting() && startGame == true){
             controller.StartGame();
         }
         controller.Update();
     }
 
-    @Override
-    public void hide() {
-
-    }
+    @Override public void hide() { }
 
 
     @Override

@@ -1,6 +1,7 @@
 package my.chess.logic;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Game;
 import com.esotericsoftware.kryonet.Client;
@@ -17,10 +18,14 @@ public class MenuContoller {
 	private ChessConnection connection;
 	/* Client listener for StartGame message from server */
 	private Listener clientStartListener;
+	/* Server listener for listening for client connections */
+	private Listener serverConnectionListener;
 	
 	private Game game;
 	
 	private ChessUIController chessui;
+	
+	private ArrayList<Listener> connectedListeners = new ArrayList<Listener>();
 	
 	public MenuContoller(Game g)
 	{
@@ -47,6 +52,23 @@ public class MenuContoller {
 			e.printStackTrace();
 			return false;
 		}
+		
+		serverConnectionListener = new RunMethodListener<String>(String.class) {
+			@Override
+			public void run(Connection con, String object) {
+				System.out.println("Server received:"+object);
+				
+				if(object.equals("ClientConnected"))
+				{
+					for(Listener l : connectedListeners)
+					{
+						l.connected(con);
+					}
+				}
+			}
+		};
+		
+		myServ.addListener(serverConnectionListener);
 		
 		connection = new ChessConnection(myServ);
 		
@@ -81,6 +103,9 @@ public class MenuContoller {
 	    
 	    waitingForHost = true;
 	    
+	    // Send connected message
+	    myClient.sendTCP("ClientConnected");
+	    
 	    //Listen to a string message saying "StartGame", have to use isInstance cast check because of KryoNet
 	    clientStartListener = new RunMethodListener<String>(String.class) {
 	    	@Override
@@ -99,6 +124,20 @@ public class MenuContoller {
 		return true;
 	}
 	
+	
+	public void RemoveClientConnectedListener(Listener l)
+	{
+		if(connectedListeners.contains(l))
+			connectedListeners.remove(l);
+	}
+	
+	public void AddClientConnectedListener(Listener l)
+	{
+		if(!connectedListeners.contains(l))
+			connectedListeners.add(l);
+	}
+
+	
 	public void Update()
 	{
 		if(shouldStart)
@@ -115,12 +154,21 @@ public class MenuContoller {
 			// We want to send StartGame to the other client letting it know we've started
 			System.out.println("sending start message to clients");
 			connection.GetServer().sendToAllTCP("StartGame");
-			
+			connection.GetServer().removeListener(serverConnectionListener);
 		}
+		
 		
 		chessui = new ChessUIController(game, connection);
 
 		waitingForHost = false;
+	}
+	
+	/**
+	 * Checks if we are hosting and if so, if we have a client connected
+	 */
+	public boolean isHostAndHasClientConnection()
+	{
+		return connection != null && connection.isServer() && connection.GetServer().getConnections().length > 0;
 	}
 	
 	/**
@@ -136,6 +184,6 @@ public class MenuContoller {
 	 */
 	public boolean isHosting()
 	{
-		return connection.isServer();
+		return connection != null && connection.isServer();
 	}
 }

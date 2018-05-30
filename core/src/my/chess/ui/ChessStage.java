@@ -8,21 +8,27 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 import my.chess.api.ChessBoard;
 import my.chess.api.ChessBoardChangeListener;
 import my.chess.logic.ChessUIController;
 
-public class ChessStage implements Screen, ChessBoardChangeListener {
+public class ChessStage implements Screen {
 
 	
 	Stage stage;
 	Skin skin;
 	
+	Texture chessboard;
+	Image cb;
 	Texture background;
 	Image bg;
+	
+	Label turnText;
 	
 	Texture pawnTex_w,	 pawnTex_b;
 	Texture rookTex_w,	 rookTex_b;
@@ -31,36 +37,50 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	Texture bishopTex_w, bishopTex_b;
 	Texture knightTex_w, knightTex_b;
 	
-	private float boardPadX = 32;
+	private float boardPadX = 272; // 32 + 240
 	private float boardPadY = 32;
+	private float boardEdgeSize = 32;
 	private float chessPieceSize = 92;
 	
 	private ChessUIController controller;
 	
-	private final int BG_Z = 0;
 	
 	public ChessStage(ChessUIController controller)
 	{
 		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		stage = new Stage();
 
-		background = new Texture("chessboard.png");
-		
+		chessboard = new Texture("chessboard.png");
+		background = new Texture("game_bg.png");
 		bg = new Image(background);
-		bg.setSize(800, 800);
-		bg.setZIndex(BG_Z);
+		bg.setZIndex(0);
+		bg.setSize(1280, 960);
+		stage.addActor(bg);
 		
-		bg.addListener(new ClickListener() {
+		turnText = new Label("AAAAA", skin);
+		turnText.setPosition(640, 910);
+		turnText.setFontScale(3.0f);
+		turnText.setColor(1,1,1,1);
+		turnText.setAlignment(Align.center);
+		turnText.setVisible(true);
+		turnText.setZIndex(1);
+		turnText.setText("Sample text");
+		stage.addActor(turnText);
+		
+		cb = new Image(chessboard);
+		cb.setSize(800, 800);
+		cb.setPosition(240, 0);
+		// 1280 - 800 = 480 (240*2)
+		
+		cb.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				chessboardClick(x, y);
 			}
 		});
-		stage.addActor(bg);
+		stage.addActor(cb);
 		
 		this.controller = controller;
-		if(controller != null)
-			controller.GetChessBoard().AddChangeListener(this);
 		
 		loadChessPieces();
 		
@@ -77,6 +97,7 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		
 		drawChessPieces();
 		
+		controller.Update();
 	}
 
 	private void drawChessPieces()
@@ -152,8 +173,8 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	{
 		// Convert to board coordinates(indices)
 		
-		x -= boardPadX;
-		y -= boardPadY;
+		x -= boardEdgeSize;
+		y -= boardEdgeSize;
 		
 		// Divide position with the size of the playing field
 		float tmp = chessPieceSize * 7.0f;
@@ -211,12 +232,16 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	
 	}
 	
+	public void SetTurnText(String text)
+	{
+		turnText.setText(text);
+	}
+	
 	@Override public void show() { Gdx.input.setInputProcessor(stage); }
-	@Override public void OnChessBoardChange() {  }
 	
 	@Override
 	public void dispose() {
-		background.dispose();
+		chessboard.dispose();
 		
 		// Dispose of all the chesspiece textures when not needed anymore
 		pawnTex_w.dispose();
@@ -232,9 +257,6 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		kingTex_b.dispose();
 		bishopTex_b.dispose();
 		knightTex_b.dispose();
-		
-		if(controller != null)
-			controller.GetChessBoard().RemoveChangeListener(this);
 		
 		stage.dispose();
 	}

@@ -33,6 +33,8 @@ public class ChessUIController {
 		
 		game.setScreen(chess);
 		
+		updateTurnText();
+		
 		moveListener = new RunMethodListener<NetChessMove>(NetChessMove.class) {
 			@Override
 			public void run(Connection con, NetChessMove object) {
@@ -59,14 +61,17 @@ public class ChessUIController {
 	
 	public void Update()
 	{
-		if(chessboard.GetPlayerTurn() == connection.GetPlayerIndex())
+		updateTurnText();
+	}
+	
+	private void updateTurnText()
+	{
+		if(connection.GetPlayerIndex() == chessboard.GetPlayerTurn())
 		{
-			// TODO Text in UI should say Your Turn
+			chess.SetTurnText("Your turn");
 		}
 		else
-		{
-			// TODO Text in UI should say Waiting for other player
-		}
+			chess.SetTurnText("Other player's turn");
 	}
 	
 	/**
