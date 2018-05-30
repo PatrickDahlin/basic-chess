@@ -1,8 +1,8 @@
 package my.chess.api;
 
-import java.util.ArrayList;
-
 import my.chess.api.ChessPiece.ChessPieceType;
+
+import java.util.ArrayList;
 
 public class ChessBoard {
 	
@@ -149,4 +149,110 @@ public class ChessBoard {
 		if(changeListeners.contains(l))
 			changeListeners.remove(l);
 	}
+
+    public void GetLegalMoves(int x, int y, ChessPieceType type){
+
+        ArrayList<int[]> legalMoves = new ArrayList<int[]>(); //MOVES THAT ARE LEGAL
+        ArrayList<int[]> offsets = new ArrayList<int[]>(); //HOW THE PIECE IS ABLE TO MOVE
+        int moveLength;
+
+	    switch (type){
+            case Pawn:
+                break;
+            case Bishop:
+
+                moveLength = 7;
+                offsets.add(new int[]{1,1});
+                offsets.add(new int[]{1,-1});
+                offsets.add(new int[]{-1,1});
+                offsets.add(new int[]{-1,-1});
+                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+
+                break;
+            case King:
+
+                moveLength = 1;
+                offsets.add(new int[]{1,1});
+                offsets.add(new int[]{1,0});
+                offsets.add(new int[]{1,-1});
+                offsets.add(new int[]{0,1});
+                offsets.add(new int[]{0,-1});
+                offsets.add(new int[]{-1,1});
+                offsets.add(new int[]{-1,0});
+                offsets.add(new int[]{-1,-1});
+                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+
+                break;
+            case Queen:
+
+                moveLength = 7;
+                offsets.add(new int[]{1,1});
+                offsets.add(new int[]{1,0});
+                offsets.add(new int[]{1,-1});
+                offsets.add(new int[]{0,1});
+                offsets.add(new int[]{0,-1});
+                offsets.add(new int[]{-1,1});
+                offsets.add(new int[]{-1,0});
+                offsets.add(new int[]{-1,-1});
+                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+
+                break;
+            case Rook:
+
+                moveLength = 7;
+                offsets.add(new int[]{1,0});
+                offsets.add(new int[]{0,1});
+                offsets.add(new int[]{0,-1});
+                offsets.add(new int[]{-1,0});
+                checkLegal(offsetMove(x, y, offsets, moveLength), 1);
+
+                break;
+            case Knight:
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private ArrayList<int[]> offsetMove(int x, int y, ArrayList<int[]> offsets, int moveLength){
+
+        ArrayList<int[]> moves = new ArrayList<int[]>();
+
+	    for(int i = 0; i != offsets.size(); i++){
+            for(int k = 1; k > moveLength; k++){
+                int newX = x;
+                int newY = y;
+
+                if(offsets.get(i)[0] == 1){
+                    newX = x + k;
+                }else if(offsets.get(i)[0] == -1) {
+                    newX = x - k;
+                }
+
+                if(offsets.get(i)[1] == 1){
+                    newY = y + k;
+                }else if(offsets.get(i)[1] == -1) {
+                    newY = y - k;
+                }
+
+                if(newX != x && newY != y){ //Doesn't add new move if it didn't change anything
+                    moves.add(new int[]{newX,newY});
+                }
+
+                if(GetChessPieceAt(moves.get(moves.size()-1)[0],moves.get(moves.size()-1)[1]) == null){ // Stops current offset loop (inner loop) if it finds a chess piece on newest move
+                    break;
+                }
+
+            }
+        }
+
+        return moves;
+
+    }
+
+    private void checkLegal(ArrayList<int[]> moves, int color){
+
+    }
+
 }
