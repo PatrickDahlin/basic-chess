@@ -100,7 +100,11 @@ public class ChessUIController {
 				selectedX = boardX;
 				selectedY = boardY;
 				
-				// TODO @Unimplemeted  selectedPieceMoves = chessboard.getmoves(selectedX,selectedY);
+				selectedPieceMoves = chessboard.GetLegalMoves(selectedX,selectedY,connection.GetPlayerIndex());
+				
+				System.out.println("Got "+selectedPieceMoves.size()+" moves for "+chessboard.GetChessPieceAt(selectedX, selectedY).GetPieceType().toString()+" at "+selectedX+","+selectedY);
+				for(int[] a : selectedPieceMoves)
+					System.out.print("["+a[0]+","+a[1]+"]");
 			}
 			else if(selected.GetPlayerIndex() != connection.GetPlayerIndex())
 			{

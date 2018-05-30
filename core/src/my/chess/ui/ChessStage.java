@@ -1,10 +1,14 @@
 package my.chess.ui;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import my.chess.api.ChessBoard;
-import my.chess.api.ChessBoardChangeListener;
 import my.chess.logic.ChessUIController;
 
 public class ChessStage implements Screen {
@@ -97,6 +100,28 @@ public class ChessStage implements Screen {
 		drawChessPieces();
 		
 		controller.Update();
+		
+		drawLegalMoves();
+	}
+	
+	ShapeRenderer r = new ShapeRenderer();
+	
+	private void drawLegalMoves()
+	{
+		ArrayList<int[]> moves = controller.GetLegalMovesForSelection();
+		
+		if(moves == null || moves.size() == 0) return;
+		
+		r.setAutoShapeType(true);
+		r.begin(ShapeType.Filled);
+		r.setColor(.2f, .8f, .2f, 1f);
+		
+		for(int[] pos : moves)
+		{
+			r.ellipse(pos[0] * chessPieceSize + boardPadX + 0.5f * chessPieceSize - 12, pos[1] * chessPieceSize + boardPadY + 0.5f * chessPieceSize - 12, 32, 32);
+		}
+		
+		r.end();
 	}
 
 	private void drawChessPieces()

@@ -6,8 +6,8 @@ public class ChessPiece {
 		Pawn,Bishop,King,Queen,Rook,Knight
 	}
 	
-	ChessPieceType type = ChessPieceType.Pawn;
-	int playerOwner = 0;
+	private ChessPieceType type = ChessPieceType.Pawn;
+	private int playerOwner = 0;
 	
 	public ChessPiece(ChessPieceType t, int playernr)
 	{

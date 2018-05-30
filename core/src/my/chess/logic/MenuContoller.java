@@ -50,6 +50,8 @@ public class MenuContoller {
 		} catch (IOException e) {
 			System.out.println("Failed to start server");
 			e.printStackTrace();
+			myServ.stop();
+			myServ = null;
 			return false;
 		}
 		
@@ -95,6 +97,7 @@ public class MenuContoller {
 		} catch (IOException e) {
 			System.out.println("Failed to connect to server at "+ip+":"+port);
 			e.printStackTrace();
+			myClient.stop();
 			return false;
 		}
 	    

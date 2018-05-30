@@ -134,7 +134,7 @@ public class ChessBoard {
 	private boolean isWithinBoard(int x, int y)
 	{
 		if(x < 0 || x > 7 || y < 0 || y > 7) {
-			System.out.printf("Tried accessing board position %i,%i which was out of bounds!\n",x,y);
+			//System.out.println("Tried accessing board position "+x+","+y+" which was out of bounds!");
 			return false;
 		}
 		return true;
@@ -160,15 +160,17 @@ public class ChessBoard {
 			changeListeners.remove(l);
 	}
 
-    public ArrayList<int[]> GetLegalMoves(int x, int y, ChessPieceType type, int color){
+    public ArrayList<int[]> GetLegalMoves(int x, int y, int playerindex){
 
         ArrayList<int[]> offsets = new ArrayList<int[]>(); //HOW THE PIECE IS ABLE TO MOVE
         int moveLength;
-
+        
+        ChessPieceType type = GetChessPieceAt(x,y).GetPieceType(); // type can be gotten here, doesn't need to be given in parameters
+        
 	    switch (type){
             case Pawn:
 
-                return pawnMoves(x, y, color);
+                return pawnMoves(x, y, playerindex);
 
             case Bishop:
 
@@ -177,7 +179,7 @@ public class ChessBoard {
                 offsets.add(new int[]{1,-1});
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
 
             case King:
 
@@ -190,7 +192,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
 
             case Queen:
 
@@ -203,7 +205,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
 
             case Rook:
 
@@ -212,20 +214,19 @@ public class ChessBoard {
                 offsets.add(new int[]{0,1});
                 offsets.add(new int[]{0,-1});
                 offsets.add(new int[]{-1,0});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), color);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
 
             case Knight:
 
-                ArrayList<int[]> moves = new ArrayList<int[]>();
-                moves.add(new int[]{x+2,y+1});
-                moves.add(new int[]{x+2,y-1});
-                moves.add(new int[]{x-2,y+1});
-                moves.add(new int[]{x-2,y-1});
-                moves.add(new int[]{x+1,y+2});
-                moves.add(new int[]{x-1,y+2});
-                moves.add(new int[]{x+1,y-2});
-                moves.add(new int[]{x-1,y-2});
-                return checkLegal(moves,color);
+            	offsets.add(new int[]{x+2,y+1});
+            	offsets.add(new int[]{x+2,y-1});
+            	offsets.add(new int[]{x-2,y+1});
+            	offsets.add(new int[]{x-2,y-1});
+            	offsets.add(new int[]{x+1,y+2});
+            	offsets.add(new int[]{x-1,y+2});
+            	offsets.add(new int[]{x+1,y-2});
+            	offsets.add(new int[]{x-1,y-2});
+                return checkLegal(offsets,playerindex);
 
             default:
 
@@ -238,7 +239,11 @@ public class ChessBoard {
     private ArrayList<int[]> pawnMoves(int x, int y, int color){
 
 	    ArrayList<int[]> pawnMoves = new ArrayList<int[]>();
-
+	    
+	    if(true) return pawnMoves;
+	    
+	    // TODO This is borked, if pawn is moved from y=2 to y=1 it gets the "starting double move"
+	    
 	    //Assuming that the black side starts on "top" y=7 and the white side starts on bottom y=0
         switch (color){
             case 1:
@@ -247,7 +252,7 @@ public class ChessBoard {
                 if(isWithinBoard(x,y + 1)) {
                     if (GetChessPieceAt(x, y + 1) != null) {
                         pawnMoves.add(new int[]{x, y + 1});
-                        if (y == 1) {
+                        if (y == 1) { // TODO !!
                             if (GetChessPieceAt(x, y + 2) != null) {
                                 pawnMoves.add(new int[]{x, y + 2});
                             }
@@ -259,7 +264,7 @@ public class ChessBoard {
                 if(isWithinBoard(x + 1, y + 1)) {
                     if (GetChessPieceAt(x + 1, y + 1) == null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
-                        if (tmpPiece.playerOwner != color) {
+                        if (false && tmpPiece.GetPlayerIndex() != color) { // TODO <---- wat tmpPiece is always null
                             pawnMoves.add(new int[]{x + 1, y + 1});
                         }
                     }
@@ -268,7 +273,7 @@ public class ChessBoard {
                 if(isWithinBoard(x - 1, y + 1)) {
                     if (GetChessPieceAt(x - 1, y + 1) == null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
-                        if (tmpPiece.playerOwner != color) {
+                        if (tmpPiece.GetPlayerIndex() != color) {
                             pawnMoves.add(new int[]{x + 1, y + 1});
                         }
                     }
@@ -293,7 +298,7 @@ public class ChessBoard {
                 if(isWithinBoard(x + 1, y - 1)) {
                     if (GetChessPieceAt(x + 1, y - 1) == null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
-                        if (tmpPiece.playerOwner != color) {
+                        if (false && tmpPiece.GetPlayerIndex() != color) { // TODO tmpPiece is always null
                             pawnMoves.add(new int[]{x + 1, y - 1});
                         }
                     }
@@ -302,7 +307,7 @@ public class ChessBoard {
                 if(isWithinBoard(x - 1, y - 1)) {
                     if (GetChessPieceAt(x - 1, y - 1) == null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
-                        if (tmpPiece.playerOwner != color) {
+                        if (tmpPiece.GetPlayerIndex() != color) {
                             pawnMoves.add(new int[]{x + 1, y - 1});
                         }
                     }
@@ -322,30 +327,32 @@ public class ChessBoard {
 
         ArrayList<int[]> moves = new ArrayList<int[]>();
 
-	    for(int i = 0; i != offsets.size(); i++){
-            for(int k = 1; k > moveLength; k++){
+	    for(int i = 0; i != offsets.size(); i++) {
+            for(int k = 1; k <= moveLength; k++) {
                 int newX = x;
                 int newY = y;
 
-                if(offsets.get(i)[0] == 1){
-                    newX = x + k;
-                }else if(offsets.get(i)[0] == -1) {
-                    newX = x - k;
+                newX = x + k * offsets.get(i)[0];
+                newY = y + k * offsets.get(i)[1];
+                
+                if(newX != x && newY != y){ //Don't add move where the current piece is at, 0 length move is invalid
+                	int[] pos = new int[] {newX,newY};
+                	
+                	// If we found an empty slot, add it, otherwise stop testing along this offset
+                	if(GetChessPieceAt(pos[0],pos[1]) == null)
+                		moves.add(new int[]{newX,newY});
+                	else
+                		break;
                 }
+                
+                //if(moves.size() == 0) continue; // in case we didnt' add on first iteration, skip
 
-                if(offsets.get(i)[1] == 1){
-                    newY = y + k;
-                }else if(offsets.get(i)[1] == -1) {
-                    newY = y - k;
-                }
-
-                if(newX != x && newY != y){ //Doesn't add new move if it didn't change anything
-                    moves.add(new int[]{newX,newY});
-                }
-
-                if(GetChessPieceAt(moves.get(moves.size()-1)[0],moves.get(moves.size()-1)[1]) == null){ // Stops current offset loop (inner loop) if it finds a chess piece on newest move
+                /*int tmpX = moves.get(moves.size()-1)[0];
+                int tmpY = moves.get(moves.size()-1)[1];
+                
+                if(GetChessPieceAt(tmpX,tmpY) == null){ // Stops current offset loop (inner loop) if it finds a chess piece on newest move
                     break;
-                }
+                }*/
 
             }
         }
@@ -354,35 +361,35 @@ public class ChessBoard {
 
     }
 
-    private ArrayList<int[]> checkLegal(ArrayList<int[]> moves, int color){
+    private ArrayList<int[]> checkLegal(ArrayList<int[]> moves, int playerindex){
 
 	    ArrayList<Integer> nonLegalIndex = new ArrayList<Integer>();
 
-	    for(int i = 0; i != moves.size(); i++){
-
+	    // While traversing backwards it's ok to remove items, it'll only change the items that you've already visited
+	    for(int i = moves.size()-1; i >= 0; i--){
+	    	
+	    	if(moves.get(i).length < 2)
+	    	{	
+	    		moves.remove(i);
+	    		continue;
+	    	}
+	    	
             int x,y;
             x = moves.get(i)[0];
             y = moves.get(i)[1];
 
             if(!isWithinBoard(x,y)){ //Checks if its within board
-                nonLegalIndex.add(i);
-                continue;
+                moves.remove(i);
+            	continue;
             }
 
             ChessPiece targetedPiece = GetChessPieceAt(x,y);
 
-            if(targetedPiece.playerOwner == color){
-                nonLegalIndex.add(i);
-                continue;
+            if(targetedPiece != null && targetedPiece.GetPlayerIndex() == playerindex){
+                moves.remove(i);
+            	continue;
             }
 
-        }
-
-        //Removes illegal moves from move array
-        Collections.sort(nonLegalIndex, Collections.<Integer>reverseOrder()); //Sorts Illegal index list so the arraylist removes the highest indexes first
-
-        for(int i = 0; i != nonLegalIndex.size(); i++){
-            moves.remove(nonLegalIndex.get(i));
         }
 
         return moves;
