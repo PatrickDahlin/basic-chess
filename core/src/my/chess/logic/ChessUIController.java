@@ -15,6 +15,10 @@ public class ChessUIController {
 	private ChessStage chess;
 	private ChessBoard chessboard;
 	
+	private boolean selectedPiece = false;
+	private int selectedX = -1;
+	private int selectedY = -1;
+	
 	private Listener moveListener;
 	
 	public ChessUIController(Game game, ChessConnection connection)
@@ -22,6 +26,8 @@ public class ChessUIController {
 		this.game = game;
 		this.connection = connection;	
 		chessboard = new ChessBoard();
+		
+		System.out.println("You are player "+connection.GetPlayerIndex());
 		
 		chess = new ChessStage(this);
 		
@@ -31,7 +37,8 @@ public class ChessUIController {
 			@Override
 			public void run(Connection con, NetChessMove object) {
 				System.out.println("Received move from other player, executing...");
-				chessboard.MoveChessPieceTo(object.player, object.fromX, object.fromY, object.toX, object.toY);
+				boolean success = chessboard.MoveChessPieceTo(object.player, object.fromX, object.fromY, object.toX, object.toY);
+				System.out.println("The move was "+(success ? "successful" : "not executed successfully"));
 			}
 		};
 		
@@ -55,34 +62,77 @@ public class ChessUIController {
 		if(chessboard.GetPlayerTurn() == connection.GetPlayerIndex())
 		{
 			// TODO Text in UI should say Your Turn
-			// TODO Allow moving of chesspieces
 		}
 		else
 		{
 			// TODO Text in UI should say Waiting for other player
-			// TODO Don't allow moving of chesspieces
 		}
 	}
 	
 	/**
 	 * User clicks on the chessboard to make a selection on a piece, or to make a move to a tile
+	 * <br> Input is in board indices (0-7 integer values)
 	 */
-	public void ChessboardClick(int screen_x, int screen_y)
+	public void ChessboardClick(int boardX, int boardY)
 	{
-		if(chessboard.GetPlayerTurn() != connection.GetPlayerIndex()) return;
+		if(chessboard.GetPlayerTurn() != connection.GetPlayerIndex()) {
+			System.out.println("It's not your turn!");
+			return;
+		}
 		
-		float padding = 0;
-		float size = 0;
-		float boardOriginX = 0;
-		float boardOriginY = 0;
+		// Check that selection is players own chesspiece
+		ChessPiece selected = chessboard.GetChessPieceAt(boardX, boardY);
 		
-		int pos_x = Math.round(( (screen_x - padding - boardOriginX) / size ) * 7.0f);
-		int pos_y = Math.round(( (screen_y - padding - boardOriginY) / size ) * 7.0f);
-		
-		if(pos_x < 0 || pos_y < 0 || pos_x > 7 || pos_y > 7)
-			System.out.println("Chessboard position out of range 0-7!!!");
-		
-		// pos_x and pos_y should be in 0-7 range
+		if(selected != null) {
+			System.out.println("Selected pawn of type "+selected.GetPieceType().toString());
+			if(selected.GetPlayerIndex() == connection.GetPlayerIndex())
+			{
+				// Make this the selection
+				selectedPiece = true;
+				selectedX = boardX;
+				selectedY = boardY;
+			}
+			else if(selected.GetPlayerIndex() != connection.GetPlayerIndex())
+			{
+				// We selected other players chessPiece, this means either
+				// that we want to eat the other chesspiece or we tried an invalid move
+				if(selectedPiece)
+				{
+					// we want to eat this piece since we've selected another piece earlier
+					// TODO @unimplemented ignore this move until implemeted
+					System.out.println("Tried eating piece @unimplemented");
+				}
+				//else We selected other players chesspiece which does nothing	
+			}
+		}
+		else
+		{
+			// We selected an empty slot, we either want to move piece here or do nothing
+			if(selectedPiece)
+			{
+				// We got an earlier piece selected so we want to move here
+				doMove(selectedX,selectedY,boardX,boardY);
+				selectedPiece = false;
+				selectedX = -1;
+				selectedY = -1;
+			}
+		}
+	}
+	
+	private void doMove(int fromX, int fromY, int toX, int toY)
+	{
+		chessboard.MoveChessPieceTo(connection.GetPlayerIndex(), fromX, fromY, toX, toY);
+		// Send to other player
+		if(connection.isServer())
+		{
+			connection.GetServer().sendToAllTCP(new NetChessMove(connection.GetPlayerIndex(), fromX, fromY, toX, toY));
+			System.out.println("Sent move to Client");
+		}
+		else
+		{
+			connection.GetClient().sendTCP(new NetChessMove(connection.GetPlayerIndex(), fromX, fromY, toX, toY));
+			System.out.println("Sent move to Server");
+		}
 	}
 	
 	/**
@@ -90,7 +140,9 @@ public class ChessUIController {
 	 */
 	public void AbortSelection()
 	{
-		
+		selectedPiece = false;
+		selectedX = -1;
+		selectedY = -1;
 	}
 	
 	private void OnWinCallback()

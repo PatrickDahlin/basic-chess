@@ -106,6 +106,9 @@ public class ChessBoard {
 		if(!isWithinBoard(toX,toY))
 			return false;
 		
+		if(playerMoving != nextPlayerTurn)
+			return false;
+			
 		ChessPiece p = board[fromX][fromY];
 		board[fromX][fromY] = null;
 		
@@ -118,6 +121,12 @@ public class ChessBoard {
 		for(ChessBoardChangeListener c : changeListeners)
 			c.OnChessBoardChange();
 		
+		if(nextPlayerTurn == 1)
+			nextPlayerTurn = 2;
+		else
+			nextPlayerTurn = 1;
+		
+		System.out.println("Next player move is: "+nextPlayerTurn);
 		return true;
 	}
 	

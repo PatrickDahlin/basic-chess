@@ -5,14 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import my.chess.api.ChessBoard;
 import my.chess.api.ChessBoardChangeListener;
-import my.chess.api.ChessPiece.ChessPieceType;
 import my.chess.logic.ChessUIController;
 
 public class ChessStage implements Screen, ChessBoardChangeListener {
@@ -33,13 +33,11 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 	
 	private float boardPadX = 32;
 	private float boardPadY = 32;
-	private float boardSize = 960;
 	private float chessPieceSize = 92;
 	
 	private ChessUIController controller;
 	
 	private final int BG_Z = 0;
-	private final int CHESSPIECE_Z = 2;
 	
 	public ChessStage(ChessUIController controller)
 	{
@@ -47,9 +45,17 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		stage = new Stage();
 
 		background = new Texture("chessboard.png");
+		
 		bg = new Image(background);
 		bg.setSize(800, 800);
 		bg.setZIndex(BG_Z);
+		
+		bg.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				chessboardClick(x, y);
+			}
+		});
 		stage.addActor(bg);
 		
 		this.controller = controller;
@@ -141,7 +147,32 @@ public class ChessStage implements Screen, ChessBoardChangeListener {
 		stage.getBatch().end();
 	}
 	
+	
+	private void chessboardClick(float x, float y)
+	{
+		// Convert to board coordinates(indices)
+		
+		x -= boardPadX;
+		y -= boardPadY;
+		
+		// Divide position with the size of the playing field
+		float tmp = chessPieceSize * 7.0f;
+		x /= tmp;
+		y /= tmp;
+		
+		// x and y are 0-1 floats in the playing field, convert to index 0-7
+		int boardX = (int)Math.floor(x * 7.0f);
+		int boardY = (int)Math.floor(y * 7.0f);
+		
+		//System.out.println("Final calculated board position is "+boardX+","+boardY);
 
+		if(boardX >= 0 && boardX < 8 && boardY >= 0 && boardY < 8)
+			controller.ChessboardClick(boardX, boardY);
+		else
+			controller.AbortSelection();
+	
+	}
+	
 
 	/**
 	 * Loads textures, creates actors and adds them to the stage

@@ -34,6 +34,9 @@ public class MenuContoller {
 		Server myServ = new Server();
 		myServ.start();
 		
+		myServ.getKryo().register(NetChessMove.class);
+		myServ.getKryo().register(String.class);
+		
 		// TODO Don't allow more than one client connection
 		
 		int portNum = Integer.parseInt(port);
@@ -60,6 +63,9 @@ public class MenuContoller {
 		
 		final Client myClient = new Client();
 		myClient.start();
+		
+		myClient.getKryo().register(NetChessMove.class);
+		myClient.getKryo().register(String.class);
 		
 		int portNum = Integer.parseInt(port);
 	    try {
