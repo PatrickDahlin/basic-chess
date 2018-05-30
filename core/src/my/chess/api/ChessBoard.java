@@ -127,7 +127,7 @@ public class ChessBoard {
 		else
 			nextPlayerTurn = 1;
 		
-		System.out.println("Next player move is: "+nextPlayerTurn);
+		System.out.println("Next player move is player "+nextPlayerTurn);
 		return true;
 	}
 	
