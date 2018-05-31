@@ -318,7 +318,7 @@ public class ChessStage implements Screen {
 
         quitBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
-                //@TODO Do something when clicking button?
+                System.exit(0);
             }
         });
 
