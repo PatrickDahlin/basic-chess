@@ -46,7 +46,7 @@ public class MenuContoller {
 		
 		int portNum = Integer.parseInt(port);
 		try {
-			myServ.bind(portNum, portNum+1);
+			myServ.bind(portNum);
 		} catch (IOException e) {
 			System.out.println("Failed to start server");
 			e.printStackTrace();
@@ -93,7 +93,7 @@ public class MenuContoller {
 		
 		int portNum = Integer.parseInt(port);
 	    try {
-	    	myClient.connect(5000, ip, portNum, portNum+1);
+	    	myClient.connect(5000, ip, portNum);
 		} catch (IOException e) {
 			System.out.println("Failed to connect to server at "+ip+":"+port);
 			e.printStackTrace();
