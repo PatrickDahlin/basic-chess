@@ -111,10 +111,15 @@ public class ChessBoard {
 
 		//Checks if move is legal, if its not, disallow it
         ArrayList<int[]> legalMoves = GetLegalMoves(fromX,fromY);
+        boolean legalMove = false;
         for(int i = 0; i != legalMoves.size(); i++){
-            if(!(legalMoves.get(i)[0] == toX) && !(legalMoves.get(i)[1] == toY)){
-                return false;
+            if(legalMoves.get(i)[0] == toX && legalMoves.get(i)[1] == toY){
+                legalMove = true;
             }
+        }
+
+        if(!legalMove){
+            return false;
         }
 
 		ChessPiece p = board[fromX][fromY];
