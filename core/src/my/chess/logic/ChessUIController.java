@@ -22,6 +22,7 @@ public class ChessUIController implements ChessBoardChangeListener {
 	private int selectedX = -1;
 	private int selectedY = -1;
 	private boolean gameOver = false;
+	private int wonPlayerIndex = -1;
 	
 	private Listener moveListener;
 	
@@ -64,8 +65,17 @@ public class ChessUIController implements ChessBoardChangeListener {
 		Update();
 	}
 	
+	
+	private boolean showingGameOverUI = false;
 	public void Update()
 	{
+	
+		if(gameOver && !showingGameOverUI)
+		{
+			chess.resultScreen(wonPlayerIndex == connection.GetPlayerIndex());
+
+			showingGameOverUI = true;
+		}
 		
 		updateTurnText();
 	}
@@ -191,13 +201,16 @@ public class ChessUIController implements ChessBoardChangeListener {
 
 	@Override
 	public void OnPlayerWin(int index) {
-
+		
+		wonPlayerIndex = index;
+		
         if (index == connection.GetPlayerIndex()){
             System.out.println("You won!");
-            chess.resultScreen(true);
         }else{
             System.out.println("You lost!");
-            chess.resultScreen(false);
+
+        }else{
+            System.out.println("You lost!");
         }
 
         gameOver = true;
