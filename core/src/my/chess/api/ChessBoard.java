@@ -468,6 +468,18 @@ public class ChessBoard {
     	return checked;
     }
     
+    /**
+     * Checks if king is checked and if there are any moves to remove the threat, if not return true (check-mate)
+     */
+    public boolean isKingCheckMate(int playerIndex)
+    {
+    	int[] kingPos = findPlayerKing(playerIndex);
+    	return isKingChecked(playerIndex) &&
+    			!canThreatBeRemovedNextMoveByEatingIt(kingPos[0], kingPos[1]) &&
+    			!canThreatBeRemovedByBlockingIt(kingPos[0],kingPos[1]) &&
+    			!canThreatBeRemovedByMovingPiece(kingPos[0], kingPos[1]);
+    }
+    
     private ArrayList<int[]> getPlayerMovesAll(int playerIndex)
     {
     	ArrayList<int[]> moves = new ArrayList<int[]>();
@@ -492,8 +504,7 @@ public class ChessBoard {
     {
     	ChessPiece pieceThreathened = GetChessPieceAt(x,y);
     	if(pieceThreathened == null) return null;
-    	
-    	int otherPlayerIndex = pieceThreathened.GetPlayerIndex() == 1 ? 2 : 1;
+
     	ArrayList<int[]> threateningPieces = new ArrayList<int[]>();
     	
     	// Look for threatening chesspieces
@@ -525,7 +536,6 @@ public class ChessBoard {
     
     /**
      * Finds all threats to this piece (returns false if no piece found on pos)
-     * 
      */
     private boolean canThreatBeRemovedNextMoveByEatingIt(int x, int y)
     {
@@ -626,6 +636,39 @@ public class ChessBoard {
     	return false;
     }
     
+    /**
+     * Tests all moves possible by given piece and checks if their resulting positions are threatened or not
+     * <br>If such a move exists such that the piece isn't threatened, we'll return true
+     * @return True if piece can be moved to a place where it isn't threatened, false otherwise
+     */
+    private boolean canThreatBeRemovedByMovingPiece(int x, int y)
+    {
+    	ChessPiece p = GetChessPieceAt(x,y);
+    	if(p == null) return true; // dude why u doing this
+    	
+    	// We're assuming this position is threatened, so we need to move the piece to remove threat
+    	
+    	int otherPlayerIndex = p.GetPlayerIndex() == 1 ? 2 : 1;
+    	
+    	ArrayList<int[]> moves = GetLegalMoves(x, y);
+    	
+    	ArrayList<int[]> threatenedPositions = getPlayerMovesAll(otherPlayerIndex);
+    	
+    	for(int[] move : moves)
+    	{
+    		boolean threatenedMove = false;
+    		for(int[] threatenedPos : threatenedPositions)
+    		{
+    			if(move[0] == threatenedPos[0] && move[1] == threatenedPos[1])
+    				threatenedMove = true;
+    		}
+    		if(!threatenedMove) // We found a move that removes the threat from the other player
+    			return true;
+    	}
+    	
+    	return false;
+    }
+
 }
 
 
