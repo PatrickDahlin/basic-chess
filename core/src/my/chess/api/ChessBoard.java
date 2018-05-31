@@ -3,7 +3,6 @@ package my.chess.api;
 import my.chess.api.ChessPiece.ChessPieceType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class ChessBoard {
 	
@@ -239,21 +238,17 @@ public class ChessBoard {
     private ArrayList<int[]> pawnMoves(int x, int y, int color){
 
 	    ArrayList<int[]> pawnMoves = new ArrayList<int[]>();
-	    
-	    if(true) return pawnMoves;
-	    
-	    // TODO This is borked, if pawn is moved from y=2 to y=1 it gets the "starting double move"
-	    
+
 	    //Assuming that the black side starts on "top" y=7 and the white side starts on bottom y=0
         switch (color){
             case 1:
 
                 //If player is White
                 if(isWithinBoard(x,y + 1)) {
-                    if (GetChessPieceAt(x, y + 1) != null) {
+                    if (GetChessPieceAt(x, y + 1) == null) {
                         pawnMoves.add(new int[]{x, y + 1});
-                        if (y == 1) { // TODO !!
-                            if (GetChessPieceAt(x, y + 2) != null) {
+                        if (y == 1) {
+                            if (GetChessPieceAt(x, y + 2) == null) {
                                 pawnMoves.add(new int[]{x, y + 2});
                             }
                         }
@@ -262,19 +257,19 @@ public class ChessBoard {
 
                 //If enemy piece at x-1 or x+1 and y+1 pawn is able to eat it
                 if(isWithinBoard(x + 1, y + 1)) {
-                    if (GetChessPieceAt(x + 1, y + 1) == null) {
+                    if (GetChessPieceAt(x + 1, y + 1) != null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
-                        if (false && tmpPiece.GetPlayerIndex() != color) { // TODO <---- wat tmpPiece is always null
+                        if (tmpPiece.GetPlayerIndex() != color) {
                             pawnMoves.add(new int[]{x + 1, y + 1});
                         }
                     }
                 }
 
                 if(isWithinBoard(x - 1, y + 1)) {
-                    if (GetChessPieceAt(x - 1, y + 1) == null) {
-                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y + 1);
+                    if (GetChessPieceAt(x - 1, y + 1) != null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x - 1, y + 1);
                         if (tmpPiece.GetPlayerIndex() != color) {
-                            pawnMoves.add(new int[]{x + 1, y + 1});
+                            pawnMoves.add(new int[]{x - 1, y + 1});
                         }
                     }
                 }
@@ -284,10 +279,10 @@ public class ChessBoard {
 
                 //If player is Black
                 if(isWithinBoard(x,y - 1)) {
-                    if (GetChessPieceAt(x, y - 1) != null) {
+                    if (GetChessPieceAt(x, y - 1) == null) {
                         pawnMoves.add(new int[]{x, y - 1});
                         if (y == 6) {
-                            if (GetChessPieceAt(x, y - 2) != null) {
+                            if (GetChessPieceAt(x, y - 2) == null) {
                                 pawnMoves.add(new int[]{x, y - 2});
                             }
                         }
@@ -296,19 +291,19 @@ public class ChessBoard {
 
                 //If enemy piece at x-1 or x+1 and y+1 pawn is able to eat it
                 if(isWithinBoard(x + 1, y - 1)) {
-                    if (GetChessPieceAt(x + 1, y - 1) == null) {
+                    if (GetChessPieceAt(x + 1, y - 1) != null) {
                         ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
-                        if (false && tmpPiece.GetPlayerIndex() != color) { // TODO tmpPiece is always null
+                        if (tmpPiece.GetPlayerIndex() != color) { // TODO tmpPiece is always null
                             pawnMoves.add(new int[]{x + 1, y - 1});
                         }
                     }
                 }
 
                 if(isWithinBoard(x - 1, y - 1)) {
-                    if (GetChessPieceAt(x - 1, y - 1) == null) {
-                        ChessPiece tmpPiece = GetChessPieceAt(x + 1, y - 1);
+                    if (GetChessPieceAt(x - 1, y - 1) != null) {
+                        ChessPiece tmpPiece = GetChessPieceAt(x - 1, y - 1);
                         if (tmpPiece.GetPlayerIndex() != color) {
-                            pawnMoves.add(new int[]{x + 1, y - 1});
+                            pawnMoves.add(new int[]{x - 1, y - 1});
                         }
                     }
                 }
@@ -318,6 +313,8 @@ public class ChessBoard {
                 break;
 
         }
+
+        System.out.println(pawnMoves.size());
 
         return pawnMoves;
 
