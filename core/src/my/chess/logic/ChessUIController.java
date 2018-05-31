@@ -13,7 +13,7 @@ import my.chess.ui.ChessStage;
 public class ChessUIController {
 
 	private ChessConnection connection;
-	private Game game;
+	private Game game; // TODO @unused
 	private ChessStage chess;
 	private ChessBoard chessboard;
 	
@@ -95,16 +95,20 @@ public class ChessUIController {
 			System.out.println("Selected pawn of type "+selected.GetPieceType().toString());
 			if(selected.GetPlayerIndex() == connection.GetPlayerIndex())
 			{
+				// If we clicked the same selection again, deselect
+				if(selectedPiece && selectedX == boardX && selectedY == boardY)
+				{
+					AbortSelection();
+					return;
+				}
+				
 				// Make this the selection
 				selectedPiece = true;
 				selectedX = boardX;
 				selectedY = boardY;
 				
 				selectedPieceMoves = chessboard.GetLegalMoves(selectedX,selectedY,connection.GetPlayerIndex());
-				
-				System.out.println("Got "+selectedPieceMoves.size()+" moves for "+chessboard.GetChessPieceAt(selectedX, selectedY).GetPieceType().toString()+" at "+selectedX+","+selectedY);
-				for(int[] a : selectedPieceMoves)
-					System.out.print("["+a[0]+","+a[1]+"]");
+			
 			}
 			else if(selected.GetPlayerIndex() != connection.GetPlayerIndex())
 			{
@@ -113,13 +117,9 @@ public class ChessUIController {
 				if(selectedPiece)
 				{
 					// we want to eat this piece since we've selected another piece earlier
-					// TODO @unimplemented ignore this move until implemeted
-					System.out.println("Tried eating piece @unimplemented");
+					doMove(selectedX, selectedY,boardX,boardY);
 				}
-				selectedPiece = false;
-				selectedX = -1;
-				selectedY = -1;
-				selectedPieceMoves = null;
+				AbortSelection();
 				//else We selected other players chesspiece which does nothing	
 			}
 		}
@@ -130,10 +130,8 @@ public class ChessUIController {
 			{
 				// We got an earlier piece selected so we want to move here
 				doMove(selectedX,selectedY,boardX,boardY);
-				selectedPiece = false;
-				selectedX = -1;
-				selectedY = -1;
-				selectedPieceMoves = null;
+				AbortSelection();
+				
 			}
 		}
 	}
@@ -162,20 +160,21 @@ public class ChessUIController {
 		selectedPiece = false;
 		selectedX = -1;
 		selectedY = -1;
+		selectedPieceMoves = null;
 	}
 	
 	private void OnWinCallback()
-	{
-		
-	}
+	{}
 	
 	private void OnLooseCallback()
-	{
-		
-	}
+	{}
 	
 	public ArrayList<int[]> GetLegalMovesForSelection() { return selectedPieceMoves; }
 	
 	public ChessBoard GetChessBoard() { return chessboard; }
+	
+	public int GetPlayerIndex() { return connection != null ? connection.GetPlayerIndex() : 0; }
+	
+	public int[] GetSelection() { return selectedPiece ? new int[] {selectedX, selectedY} : null; }
 	
 }

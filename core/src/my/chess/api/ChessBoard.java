@@ -328,6 +328,9 @@ public class ChessBoard {
         ArrayList<int[]> moves = new ArrayList<int[]>();
 
 	    for(int i = 0; i != offsets.size(); i++) {
+	    	
+	    	int startingIndexForThisline = moves.size(); // Remember the starting index for each line, we'll need it
+	    	
             for(int k = 1; k <= moveLength; k++) {
                 int newX = x;
                 int newY = y;
@@ -335,25 +338,37 @@ public class ChessBoard {
                 newX = x + k * offsets.get(i)[0];
                 newY = y + k * offsets.get(i)[1];
                 
-                if(newX != x && newY != y){ //Don't add move where the current piece is at, 0 length move is invalid
-                	int[] pos = new int[] {newX,newY};
+                if(newX == x && newY == y) continue; //Don't add move where the current piece is at, 0 length move is invalid
+
+            	int[] pos = new int[] {newX,newY};
                 	
-                	// If we found an empty slot, add it, otherwise stop testing along this offset
-                	if(GetChessPieceAt(pos[0],pos[1]) == null)
-                		moves.add(new int[]{newX,newY});
-                	else
-                		break;
-                }
+            	// If we found an empty slot, add it, otherwise stop testing along this offset
+            	if(GetChessPieceAt(pos[0],pos[1]) == null)
+            		moves.add(pos);
+            	else
+            	{
+            		
+            		if(moves.size() == startingIndexForThisline)
+            		{
+            			// Edge case where we hit a piece on our first step, we don't want to check for last move in this case
+            			moves.add(pos);
+            			break;
+            		}
+            		else
+            		{
+	            		// check if this is the first piece we hit
+	            		int lastX = moves.get(moves.size()-1)[0];
+	            		int lastY = moves.get(moves.size()-1)[1];
+	            		
+	            		// If last move was on an empty slot, this means we can eat this piece
+	            		if(GetChessPieceAt(lastX,lastY) == null)
+	            			moves.add(pos);
+	            		
+	            		// And lastly we don't want to continue along this line anymore since we hit a piece
+	           			break;
+            		}
+            	}
                 
-                //if(moves.size() == 0) continue; // in case we didnt' add on first iteration, skip
-
-                /*int tmpX = moves.get(moves.size()-1)[0];
-                int tmpY = moves.get(moves.size()-1)[1];
-                
-                if(GetChessPieceAt(tmpX,tmpY) == null){ // Stops current offset loop (inner loop) if it finds a chess piece on newest move
-                    break;
-                }*/
-
             }
         }
 
@@ -361,15 +376,16 @@ public class ChessBoard {
 
     }
 
+    /**
+     * Checks that all given moves are within the board and that they don't overlap with your own chesspieces (invalid moves)
+     */
     private ArrayList<int[]> checkLegal(ArrayList<int[]> moves, int playerindex){
-
-	    ArrayList<Integer> nonLegalIndex = new ArrayList<Integer>();
 
 	    // While traversing backwards it's ok to remove items, it'll only change the items that you've already visited
 	    for(int i = moves.size()-1; i >= 0; i--){
 	    	
 	    	if(moves.get(i).length < 2)
-	    	{	
+	    	{
 	    		moves.remove(i);
 	    		continue;
 	    	}
@@ -385,6 +401,7 @@ public class ChessBoard {
 
             ChessPiece targetedPiece = GetChessPieceAt(x,y);
 
+            // Prevent "eating" of own pieces
             if(targetedPiece != null && targetedPiece.GetPlayerIndex() == playerindex){
                 moves.remove(i);
             	continue;

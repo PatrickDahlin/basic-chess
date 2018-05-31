@@ -69,6 +69,29 @@ public class ChessStage implements Screen {
 		turnText.setZIndex(1);
 		stage.addActor(turnText);
 		
+		Label sideText = new Label("You", skin);
+		Label sideText2 = new Label("Other player", skin);
+		
+		if(controller.GetPlayerIndex() == 1)
+		{	
+			sideText.setPosition(630, 10);
+			sideText2.setPosition(600, 770);
+		} else
+		{	
+			sideText.setPosition(630, 770);
+			sideText2.setPosition(600, 10);
+		}
+		
+		sideText.setFontScale(1.5f);
+		sideText.setColor(.4f,1f,.4f,1f);
+		sideText.setAlignment(Align.center);
+		sideText.setZIndex(3);
+		
+		sideText2.setFontScale(1.4f);
+		sideText2.setColor(1f, .4f, .4f, 1f);
+		sideText2.setAlignment(Align.center);
+		sideText2.setZIndex(3);
+		
 		cb = new Image(chessboard);
 		cb.setSize(800, 800);
 		cb.setPosition(240, 0);
@@ -81,6 +104,9 @@ public class ChessStage implements Screen {
 			}
 		});
 		stage.addActor(cb);
+		
+		stage.addActor(sideText);
+		stage.addActor(sideText2);
 		
 		this.controller = controller;
 		
@@ -186,10 +212,18 @@ public class ChessStage implements Screen {
 				float tmpX = x * chessPieceSize + boardPadX;
 				float tmpY = y * chessPieceSize + boardPadY;
 				
+				if(controller.GetSelection() != null && 
+						controller.GetSelection()[0] == x && 
+						controller.GetSelection()[1] == y)
+					stage.getBatch().setColor(.7f, .7f, 1f, 1f);
+				
 				stage.getBatch().draw(tmp, tmpX, tmpY, chessPieceSize, chessPieceSize);
+				stage.getBatch().setColor(1f, 1f, 1f, 1f);
+				
 			}
 		}
 		stage.getBatch().end();
+		stage.getBatch().setColor(1f, 1f, 1f, 1f);
 	}
 	
 	
