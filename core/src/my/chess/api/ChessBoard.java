@@ -108,7 +108,15 @@ public class ChessBoard {
 		
 		if(playerMoving != nextPlayerTurn)
 			return false;
-			
+
+		//Checks if move is legal, if its not, disallow it
+        ArrayList<int[]> legalMoves = GetLegalMoves(fromX,fromY);
+        for(int i = 0; i != legalMoves.size(); i++){
+            if(!(legalMoves.get(i)[0] == toX) && !(legalMoves.get(i)[1] == toY)){
+                return false;
+            }
+        }
+
 		ChessPiece p = board[fromX][fromY];
 		board[fromX][fromY] = null;
 		
@@ -159,17 +167,18 @@ public class ChessBoard {
 			changeListeners.remove(l);
 	}
 
-    public ArrayList<int[]> GetLegalMoves(int x, int y, int playerindex){
+    public ArrayList<int[]> GetLegalMoves(int x, int y){
 
         ArrayList<int[]> offsets = new ArrayList<int[]>(); //HOW THE PIECE IS ABLE TO MOVE
         int moveLength;
         
         ChessPieceType type = GetChessPieceAt(x,y).GetPieceType(); // type can be gotten here, doesn't need to be given in parameters
-        
+        int playerIndex = GetChessPieceAt(x,y).GetPlayerIndex();
+
 	    switch (type){
             case Pawn:
 
-                return pawnMoves(x, y, playerindex);
+                return pawnMoves(x, y, playerIndex);
 
             case Bishop:
 
@@ -178,7 +187,7 @@ public class ChessBoard {
                 offsets.add(new int[]{1,-1});
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerIndex);
 
             case King:
 
@@ -191,7 +200,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerIndex);
 
             case Queen:
 
@@ -204,7 +213,7 @@ public class ChessBoard {
                 offsets.add(new int[]{-1,1});
                 offsets.add(new int[]{-1,0});
                 offsets.add(new int[]{-1,-1});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerIndex);
 
             case Rook:
 
@@ -213,7 +222,7 @@ public class ChessBoard {
                 offsets.add(new int[]{0,1});
                 offsets.add(new int[]{0,-1});
                 offsets.add(new int[]{-1,0});
-                return checkLegal(offsetMove(x, y, offsets, moveLength), playerindex);
+                return checkLegal(offsetMove(x, y, offsets, moveLength), playerIndex);
 
             case Knight:
 
@@ -225,7 +234,7 @@ public class ChessBoard {
             	offsets.add(new int[]{x-1,y+2});
             	offsets.add(new int[]{x+1,y-2});
             	offsets.add(new int[]{x-1,y-2});
-                return checkLegal(offsets,playerindex);
+                return checkLegal(offsets,playerIndex);
 
             default:
 

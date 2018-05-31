@@ -1,14 +1,13 @@
 package my.chess.logic;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Game;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-
 import my.chess.api.ChessBoard;
 import my.chess.api.ChessPiece;
 import my.chess.ui.ChessStage;
+
+import java.util.ArrayList;
 
 public class ChessUIController {
 
@@ -107,7 +106,7 @@ public class ChessUIController {
 				selectedX = boardX;
 				selectedY = boardY;
 				
-				selectedPieceMoves = chessboard.GetLegalMoves(selectedX,selectedY,connection.GetPlayerIndex());
+				selectedPieceMoves = chessboard.GetLegalMoves(selectedX,selectedY);
 			
 			}
 			else if(selected.GetPlayerIndex() != connection.GetPlayerIndex())
@@ -138,6 +137,7 @@ public class ChessUIController {
 	
 	private void doMove(int fromX, int fromY, int toX, int toY)
 	{
+
 		chessboard.MoveChessPieceTo(connection.GetPlayerIndex(), fromX, fromY, toX, toY);
 		// Send to other player
 		if(connection.isServer())
@@ -150,6 +150,7 @@ public class ChessUIController {
 			connection.GetClient().sendTCP(new NetChessMove(connection.GetPlayerIndex(), fromX, fromY, toX, toY));
 			System.out.println("Sent move to Server");
 		}
+
 	}
 	
 	/**
