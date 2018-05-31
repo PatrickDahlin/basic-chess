@@ -208,9 +208,6 @@ public class ChessUIController implements ChessBoardChangeListener {
             System.out.println("You won!");
         }else{
             System.out.println("You lost!");
-
-        }else{
-            System.out.println("You lost!");
         }
 
         gameOver = true;
