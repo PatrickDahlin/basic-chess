@@ -244,6 +244,9 @@ public class ChessStage implements Screen {
 		int boardX = (int)Math.floor(x * 7.0f);
 		int boardY = (int)Math.floor(y * 7.0f);
 		
+		// Since we flipped texture in x axis the coordinates in x also inverted
+		boardX = 7 - boardX;
+		
 		//System.out.println("Final calculated board position is "+boardX+","+boardY);
 
 		if(boardX >= 0 && boardX < 8 && boardY >= 0 && boardY < 8)

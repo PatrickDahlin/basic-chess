@@ -196,8 +196,6 @@ public class ChessMainMenu implements Screen {
         batch.begin();
         batch.draw(background, 0, 0);
 
-
-        // TODO draw chesspieces here
         batch.end();
         stage.draw();
         if(controller.isHosting() && startGame == true){

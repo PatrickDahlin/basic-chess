@@ -4,12 +4,13 @@ import com.badlogic.gdx.Game;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import my.chess.api.ChessBoard;
+import my.chess.api.ChessBoardChangeListener;
 import my.chess.api.ChessPiece;
 import my.chess.ui.ChessStage;
 
 import java.util.ArrayList;
 
-public class ChessUIController {
+public class ChessUIController implements ChessBoardChangeListener {
 
 	private ChessConnection connection;
 	private Game game; // TODO @unused
@@ -20,6 +21,7 @@ public class ChessUIController {
 	private boolean selectedPiece = false;
 	private int selectedX = -1;
 	private int selectedY = -1;
+	private boolean gameOver = false;
 	
 	private Listener moveListener;
 	
@@ -28,6 +30,7 @@ public class ChessUIController {
 		this.game = game;
 		this.connection = connection;	
 		chessboard = new ChessBoard();
+		chessboard.AddChangeListener(this);
 		
 		System.out.println("You are player "+connection.GetPlayerIndex());
 		
@@ -63,6 +66,7 @@ public class ChessUIController {
 	
 	public void Update()
 	{
+		
 		updateTurnText();
 	}
 	
@@ -82,6 +86,8 @@ public class ChessUIController {
 	 */
 	public void ChessboardClick(int boardX, int boardY)
 	{
+		if(gameOver) return;
+		
 		if(chessboard.GetPlayerTurn() != connection.GetPlayerIndex()) {
 			System.out.println("It's not your turn!");
 			return;
@@ -137,7 +143,8 @@ public class ChessUIController {
 	
 	private void doMove(int fromX, int fromY, int toX, int toY)
 	{
-
+		if(gameOver) return;
+		
 		chessboard.MoveChessPieceTo(connection.GetPlayerIndex(), fromX, fromY, toX, toY);
 		// Send to other player
 		if(connection.isServer())
@@ -164,11 +171,12 @@ public class ChessUIController {
 		selectedPieceMoves = null;
 	}
 	
-	private void OnWinCallback()
-	{}
-	
-	private void OnLooseCallback()
-	{}
+	public void Restart()
+	{
+		AbortSelection();
+		chessboard.ResetBoard();
+		gameOver = false;
+	}
 	
 	public ArrayList<int[]> GetLegalMovesForSelection() { return selectedPieceMoves; }
 	
@@ -177,5 +185,20 @@ public class ChessUIController {
 	public int GetPlayerIndex() { return connection != null ? connection.GetPlayerIndex() : 0; }
 	
 	public int[] GetSelection() { return selectedPiece ? new int[] {selectedX, selectedY} : null; }
+
+	@Override
+	public void OnChessBoardChange() {}
+
+	@Override
+	public void OnPlayerWin(int index) {
+		if(index == connection.GetPlayerIndex())
+			System.out.println("You won!");
+		else
+			System.out.println("You lost!");
+		
+		gameOver = true;
+		
+	}
+
 	
 }

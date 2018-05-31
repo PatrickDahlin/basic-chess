@@ -134,6 +134,21 @@ public class ChessBoard {
 		for(ChessBoardChangeListener c : changeListeners)
 			c.OnChessBoardChange();
 		
+		// Checking if either player is check-mate
+		// We do checked test first since it's faster and a checkmate only when needed
+		
+		if(isKingChecked(1))
+			if(isKingCheckMate(1))
+				for(ChessBoardChangeListener c : changeListeners)
+					c.OnPlayerWin(1);
+		
+		if(isKingChecked(2))
+			if(isKingCheckMate(2))
+				for(ChessBoardChangeListener c : changeListeners)
+					c.OnPlayerWin(2);
+			
+		
+		
 		if(nextPlayerTurn == 1)
 			nextPlayerTurn = 2;
 		else
@@ -328,8 +343,6 @@ public class ChessBoard {
 
         }
 
-        System.out.println(pawnMoves.size());
-
         return pawnMoves;
 
     }
@@ -442,17 +455,23 @@ public class ChessBoard {
     	return null;
     }
     
-    private boolean isKingChecked(int playerIndex)
+    /**
+     * Is this player's king in check?
+     */
+    public boolean isKingChecked(int playerIndex)
     {
     	
     	// Find king for this player
     	int[] kingPos = findPlayerKing(playerIndex);
+    	
+    	if(kingPos == null) return true;
+    	
     	int otherPlayerIndex = playerIndex == 1 ? 2 : 1;
     	
     	// is the king threathened? ie. can the other player eat the king in his/her next move
     	
     	// First acuire all moves possible for the other player
-    	ArrayList<int[]> moves = getPlayerMovesAll(otherPlayerIndex);
+    	ArrayList<int[]> moves = getPlayerMovesAll(otherPlayerIndex, false);
     	
     	// Check if any of the moves result in eating the king
     	boolean checked = false;
@@ -465,6 +484,9 @@ public class ChessBoard {
     		}
     	}
     	
+    	if(checked)
+    		System.out.println("Player "+playerIndex+" has his king checked");
+    	
     	return checked;
     }
     
@@ -474,13 +496,26 @@ public class ChessBoard {
     public boolean isKingCheckMate(int playerIndex)
     {
     	int[] kingPos = findPlayerKing(playerIndex);
-    	return isKingChecked(playerIndex) &&
+    	
+    	if(kingPos == null) 
+    	{
+    		System.out.println("Player "+playerIndex+" has no king");
+    		return true; // king has been eaten
+    	}
+    	
+    	if( isKingChecked(playerIndex) &&
     			!canThreatBeRemovedNextMoveByEatingIt(kingPos[0], kingPos[1]) &&
     			!canThreatBeRemovedByBlockingIt(kingPos[0],kingPos[1]) &&
-    			!canThreatBeRemovedByMovingPiece(kingPos[0], kingPos[1]);
+    			!canThreatBeRemovedByMovingPiece(kingPos[0], kingPos[1]) )
+    	{
+    		System.out.println("Player "+playerIndex+" is in checkmate");
+    		return true;
+    	}
+    	else
+    		return false;
     }
     
-    private ArrayList<int[]> getPlayerMovesAll(int playerIndex)
+    private ArrayList<int[]> getPlayerMovesAll(int playerIndex, boolean excludeKing)
     {
     	ArrayList<int[]> moves = new ArrayList<int[]>();
     	for(int x=0; x < 8; x++)
@@ -488,7 +523,7 @@ public class ChessBoard {
     		for(int y=0; y < 8; y++)
     		{
     			ChessPiece tmp = GetChessPieceAt(x, y);
-    			if(tmp != null && tmp.GetPlayerIndex() == playerIndex)
+    			if(tmp != null && tmp.GetPlayerIndex() == playerIndex && (excludeKing && tmp.GetPieceType() != ChessPieceType.King || !excludeKing) )
     			{
     				// Get moves for this chesspiece
     				ArrayList<int[]> tmpMoves = GetLegalMoves(x,y);
@@ -550,7 +585,7 @@ public class ChessBoard {
     	if(threats.size() <= 0) return true; // um, we got no threats
     	
 		// We found one threatening piece and got it's position, now we check if our moves can eat it
-		ArrayList<int[]> moves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex());
+		ArrayList<int[]> moves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex(), false);
 	
 		boolean canEat = false;
 		for(int[] move : moves)
@@ -562,6 +597,9 @@ public class ChessBoard {
 				break;
 			}
 		}
+		if(canEat)
+			System.out.println("Threat can be eaten");
+		
 		return canEat;
     	
     }
@@ -582,7 +620,7 @@ public class ChessBoard {
     	
     	ArrayList<int[]> threateningPieces = getThreateningPieces(x,y);
     	
-    	ArrayList<int[]> possiblyBlockingMoves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex());
+    	ArrayList<int[]> possiblyBlockingMoves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex(), true);
     	
     	// Check each move we can do to see if it blocks all threatening piece moves to this piece
     	// Note knights can't be blocked
@@ -623,14 +661,19 @@ public class ChessBoard {
     				if(tmpX == x && tmpY == y) break; // We reached our piece, aka we couldn't block it
     				
     				if(testBlockingMove[0] == tmpX && testBlockingMove[1] == tmpY)
+    				{	
     					moveBlocksNumPieces++; // We can block this move
-    				
+    					break;
+    				}
     			}
     		}
     		
     		// If we can block all threats, we're good
     		if(moveBlocksNumPieces == threateningPieces.size())
+    		{	
+    			System.out.println("We can block the threat");
     			return true;
+    		}
     	}
     	
     	return false;
@@ -652,7 +695,7 @@ public class ChessBoard {
     	
     	ArrayList<int[]> moves = GetLegalMoves(x, y);
     	
-    	ArrayList<int[]> threatenedPositions = getPlayerMovesAll(otherPlayerIndex);
+    	ArrayList<int[]> threatenedPositions = getPlayerMovesAll(otherPlayerIndex, false);
     	
     	for(int[] move : moves)
     	{
@@ -663,7 +706,10 @@ public class ChessBoard {
     				threatenedMove = true;
     		}
     		if(!threatenedMove) // We found a move that removes the threat from the other player
+    		{
+    			System.out.println("We can move away from the threat");
     			return true;
+    		}
     	}
     	
     	return false;
