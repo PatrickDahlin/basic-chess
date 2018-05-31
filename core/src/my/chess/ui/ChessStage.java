@@ -302,21 +302,21 @@ public class ChessStage implements Screen {
 		turnText.setText(text);
 	}
 
-	public void thisMethodIsCalledWhenThePlayerEitherWinsOrLosesAndTheResultChangesDependingOnResultOfTheGame(boolean win){
+	public void resultScreen(boolean win){
 
 	    String message1;
 
 	    if(win){
-            message1 = "You are a national fucking hero, you know that?";
+            message1 = "You won!";
         } else {
-	        message1 = "You are fucking trash, you piece of human waste!";
+	        message1 = "You lost!";
         }
 
         VerticalGroup resultGroup = new VerticalGroup();
         Label resultLabel = new Label(message1,skin);
-        TextButton resultButton = new TextButton("Restart!",skin);
+        TextButton quitBtn = new TextButton("Quit!",skin);
 
-        resultButton.addListener( new ClickListener(){
+        quitBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 //@TODO Do something when clicking button?
             }
@@ -327,7 +327,7 @@ public class ChessStage implements Screen {
         background.setX(640-(background.getWidth()/2));
         background.setY(480-(background.getHeight()/2));
         resultGroup.addActor(resultLabel);
-        resultGroup.addActor(resultButton);
+        resultGroup.addActor(quitBtn);
         resultGroup.setX(640-(resultGroup.getWidth()/2));
         resultGroup.setY(480-(resultGroup.getHeight()/2));
         resultGroup.setZIndex(9999);
