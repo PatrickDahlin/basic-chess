@@ -94,7 +94,8 @@ public class ChessStage implements Screen {
 		
 		cb = new Image(chessboard);
 		cb.setSize(800, 800);
-		cb.setPosition(240, 0);
+		cb.setPosition(1040, 0);
+		cb.setScale(-1f, 1f);
 		// 1280 - 800 = 480 (240*2)
 		
 		cb.addListener(new ClickListener() {

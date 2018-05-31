@@ -413,4 +413,219 @@ public class ChessBoard {
 
     }
 
+    
+    /**
+     * Looks for the king of given player and returns it's boardposition
+     */
+    private int[] findPlayerKing(int playerIndex)
+    {
+    	for(int i=0; i < 8; i++)
+    	{
+    		for(int j=0; j < 8; j++)
+    		{
+    			ChessPiece tmp = GetChessPieceAt(i,j);
+    			if(tmp != null && tmp.GetPieceType() == ChessPieceType.King && tmp.GetPlayerIndex() == playerIndex)
+    				return new int[] {i,j};
+    		}
+    	}
+    	return null;
+    }
+    
+    private boolean isKingChecked(int playerIndex)
+    {
+    	
+    	// Find king for this player
+    	int[] kingPos = findPlayerKing(playerIndex);
+    	int otherPlayerIndex = playerIndex == 1 ? 2 : 1;
+    	
+    	// is the king threathened? ie. can the other player eat the king in his/her next move
+    	
+    	// First acuire all moves possible for the other player
+    	ArrayList<int[]> moves = getPlayerMovesAll(otherPlayerIndex);
+    	
+    	// Check if any of the moves result in eating the king
+    	boolean checked = false;
+    	for(int i=0; i < moves.size(); i++)
+    	{
+    		if(moves.get(i)[0] == kingPos[0] && moves.get(i)[1] == kingPos[1])
+    		{
+    			checked = true;
+    			break;
+    		}
+    	}
+    	
+    	return checked;
+    }
+    
+    private ArrayList<int[]> getPlayerMovesAll(int playerIndex)
+    {
+    	ArrayList<int[]> moves = new ArrayList<int[]>();
+    	for(int x=0; x < 8; x++)
+    	{
+    		for(int y=0; y < 8; y++)
+    		{
+    			ChessPiece tmp = GetChessPieceAt(x, y);
+    			if(tmp != null && tmp.GetPlayerIndex() == playerIndex)
+    			{
+    				// Get moves for this chesspiece
+    				ArrayList<int[]> tmpMoves = GetLegalMoves(x,y,playerIndex);
+    				// Add them to the total moves, we don't care if we get duplicates
+    				moves.addAll(tmpMoves);
+    			}
+    		}
+    	}
+    	return moves;
+    }
+    
+    private ArrayList<int[]> getThreateningPieces(int x, int y)
+    {
+    	ChessPiece pieceThreathened = GetChessPieceAt(x,y);
+    	if(pieceThreathened == null) return null;
+    	
+    	int otherPlayerIndex = pieceThreathened.GetPlayerIndex() == 1 ? 2 : 1;
+    	ArrayList<int[]> threateningPieces = new ArrayList<int[]>();
+    	
+    	// Look for threatening chesspieces
+    	for(int i=0; i < 8; i++)
+    	{
+    		for(int j=0; j < 8; j++)
+    		{
+    			// Find the chesspieces that can eat our piece
+        		ChessPiece enemy = GetChessPieceAt(i,j);
+        		
+        		if(enemy == null || enemy.GetPlayerIndex() == pieceThreathened.GetPlayerIndex()) continue;
+        	
+        		ArrayList<int[]> movesEnemyCanDo = GetLegalMoves(i,j,otherPlayerIndex);
+        		
+        		// See if this piece is a threat to our piece
+        		for(int[] move : movesEnemyCanDo)
+        		{
+        			if(move[0] == x && move[1] == y)
+        			{	
+        				threateningPieces.add(new int[] {i,j});
+        				break;
+        			}
+        		}
+    		}
+    	}
+    	
+    	return threateningPieces;
+    }
+    
+    /**
+     * Finds all threats to this piece (returns false if no piece found on pos)
+     * 
+     */
+    private boolean canThreatBeRemovedNextMoveByEatingIt(int x, int y)
+    {
+    	ChessPiece pieceThreathened = GetChessPieceAt(x,y);
+
+    	if(pieceThreathened == null) return false; // uuuh, you need to specify a slot where a piece is at bro
+    	
+    	
+    	ArrayList<int[]> threats = getThreateningPieces(x, y);
+    	
+    	if(threats.size() > 1) return false; // We can't eat 2 pieces in one turn
+    	if(threats.size() <= 0) return true; // um, we got no threats
+    	
+		// We found one threatening piece and got it's position, now we check if our moves can eat it
+		ArrayList<int[]> moves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex());
+	
+		boolean canEat = false;
+		for(int[] move : moves)
+		{
+			if(move[0] == threats.get(0)[0] && move[1] == threats.get(0)[1])
+			{
+				// We can eat the threat
+				canEat = true;
+				break;
+			}
+		}
+		return canEat;
+    	
+    }
+
+    /**
+     * Finds all threats to this ChessPiece (returns false if no piece found on pos) 
+     * and checks all moves the owning player can do to block the threats
+     * @return Wether owning player can do a move to block the threats to the piece on this position
+     */
+    private boolean canThreatBeRemovedByBlockingIt(int x, int y)
+    {
+    	ChessPiece pieceThreathened = GetChessPieceAt(x,y);
+
+    	if(pieceThreathened == null) return false; // uuuh, you need to specify a slot where a piece is at bro
+    	
+    	
+    	
+    	
+    	ArrayList<int[]> threateningPieces = getThreateningPieces(x,y);
+    	
+    	ArrayList<int[]> possiblyBlockingMoves = getPlayerMovesAll(pieceThreathened.GetPlayerIndex());
+    	
+    	// Check each move we can do to see if it blocks all threatening piece moves to this piece
+    	// Note knights can't be blocked
+    	for(int[] testBlockingMove : possiblyBlockingMoves)
+    	{
+    		int moveBlocksNumPieces = 0;
+    		
+    		for(int[] threateningPiece : threateningPieces)
+    		{
+    			ChessPiece p = GetChessPieceAt(threateningPiece[0],threateningPiece[1]);
+    			if(p == null || p.GetPieceType() == ChessPieceType.Knight) return false; // One of the threats is a knight, it can't be blocked
+    			
+    			// See if our test blocking move interuppts the line between it and this piece
+    			
+    			// Take the direction from the threatening piece to our piece
+    			int dirX = x - threateningPiece[0];
+    			if(dirX < 0) 
+    				dirX = -1;
+    			else if(dirX > 0)
+    				dirX = 1;
+    			
+    			int dirY = y - threateningPiece[1];
+    			if(dirY < 0) 
+    				dirY = -1;
+    			else if(dirY > 0)
+    				dirY = 1;
+    			
+    			// dirX and dirY is the offset(direction) we need to go to find our piece from the threatening piece
+    			
+    			// Step through the line and see if our move would block the line
+    			for(int i=1; i < 9; i++)
+    			{
+    				int tmpX = threateningPiece[0] + dirX * i;
+    				int tmpY = threateningPiece[1] + dirY * i;
+    				
+    				if(!isWithinBoard(tmpX, tmpY)) continue; // Oops, we went off the board
+    				
+    				if(tmpX == x && tmpY == y) break; // We reached our piece, aka we couldn't block it
+    				
+    				if(testBlockingMove[0] == tmpX && testBlockingMove[1] == tmpY)
+    					moveBlocksNumPieces++; // We can block this move
+    				
+    			}
+    		}
+    		
+    		// If we can block all threats, we're good
+    		if(moveBlocksNumPieces == threateningPieces.size())
+    			return true;
+    	}
+    	
+    	return false;
+    }
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
