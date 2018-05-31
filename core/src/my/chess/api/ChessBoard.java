@@ -479,7 +479,7 @@ public class ChessBoard {
     			if(tmp != null && tmp.GetPlayerIndex() == playerIndex)
     			{
     				// Get moves for this chesspiece
-    				ArrayList<int[]> tmpMoves = GetLegalMoves(x,y,playerIndex);
+    				ArrayList<int[]> tmpMoves = GetLegalMoves(x,y);
     				// Add them to the total moves, we don't care if we get duplicates
     				moves.addAll(tmpMoves);
     			}
@@ -506,7 +506,7 @@ public class ChessBoard {
         		
         		if(enemy == null || enemy.GetPlayerIndex() == pieceThreathened.GetPlayerIndex()) continue;
         	
-        		ArrayList<int[]> movesEnemyCanDo = GetLegalMoves(i,j,otherPlayerIndex);
+        		ArrayList<int[]> movesEnemyCanDo = GetLegalMoves(i,j);
         		
         		// See if this piece is a threat to our piece
         		for(int[] move : movesEnemyCanDo)
