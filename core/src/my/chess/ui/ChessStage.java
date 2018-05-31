@@ -151,6 +151,11 @@ public class ChessStage implements Screen {
 
 	private void drawChessPieces()
 	{
+
+	    if(controller.isGameOver()){
+	        return;
+        }
+
 		ChessBoard cb = controller.GetChessBoard();
 		
 		stage.getBatch().begin();
@@ -303,7 +308,6 @@ public class ChessStage implements Screen {
 
 	    if(win){
             message1 = "You are a national fucking hero, you know that?";
-
         } else {
 	        message1 = "You are fucking trash, you piece of human waste!";
         }
@@ -318,11 +322,16 @@ public class ChessStage implements Screen {
             }
         });
 
+        Image background = new Image(new Texture("Plumpen.png"));
+        background.setZIndex(9999-1);
+        background.setX(640-(background.getWidth()/2));
+        background.setY(480-(background.getHeight()/2));
         resultGroup.addActor(resultLabel);
         resultGroup.addActor(resultButton);
         resultGroup.setX(640-(resultGroup.getWidth()/2));
         resultGroup.setY(480-(resultGroup.getHeight()/2));
         resultGroup.setZIndex(9999);
+        stage.addActor(background);
         stage.addActor(resultGroup);
 
     }
