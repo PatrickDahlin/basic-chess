@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -73,6 +74,21 @@ public class ChessMainMenu implements Screen {
         final TextButton hostBtn = new TextButton("Host Server", skin, "default");
         hostBtn.setColor(.5f, .5f, .5f, 1);
 
+        
+
+        Label ipLabel = new Label("IP:PORT ",skin);
+        ipLabel.setColor(.5f, .5f, .5f, 1);
+
+        ipField.setColor(.5f, .5f, .5f, 1);
+
+        Label portLabel = new Label("Port: ",skin);
+        portLabel.setColor(.5f, .5f, .5f, 1);
+
+        portField.setColor(.5f, .5f, .5f, 1);
+
+        final TextButton connectBtn = new TextButton("Connect", skin, "default");
+        connectBtn.setColor(.5f, .5f, .5f, 1);
+
         hostBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 if(portField.getText().trim().equals("")){
@@ -87,6 +103,8 @@ public class ChessMainMenu implements Screen {
                     if(success)
                     {	
                     	textLabel.setText("Waiting for player to join...");
+                    	connectBtn.setTouchable(Touchable.disabled);
+                    	connectBtn.setColor(.25f, .25f, .25f, 1f);
                     	controller.AddClientConnectedListener(new Listener() {
                     		@Override
 							public void connected(Connection arg0) {
@@ -102,37 +120,28 @@ public class ChessMainMenu implements Screen {
                 }
             }
         });
-
-        Label ipLabel = new Label("IP:PORT ",skin);
-        ipLabel.setColor(.5f, .5f, .5f, 1);
-
-        ipField.setColor(.5f, .5f, .5f, 1);
-
-        Label portLabel = new Label("Port: ",skin);
-        portLabel.setColor(.5f, .5f, .5f, 1);
-
-        portField.setColor(.5f, .5f, .5f, 1);
-
-        TextButton connectBtn = new TextButton("Connect", skin, "default");
-        connectBtn.setColor(.5f, .5f, .5f, 1);
-
+        
         connectBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
                 String cleaned = ipField.getText().trim();
                 
             	if(cleaned.equals("")){
-                    ipField.setColor(2, .5f, .5f, 1);
+                    ipField.setColor(1, .5f, .5f, 1);
                     textLabel.setText("IP is Empty!");
                 } else if(cleaned.split(":").length < 2) {
-                    ipField.setColor(2, .5f, .5f, 1);
+                    ipField.setColor(1, .5f, .5f, 1);
                 	textLabel.setText("You need to specify a port to connect to!");
                 } else {
-                    ipField.setColor(.5f, .5f, .5f, 1);
+                    ipField.setColor(.25f, .25f, .25f, 1);
                     textLabel.setText("Connecting...");
                     String[] ip = cleaned.split(":");
                     boolean success = controller.ConnectToGame(ip[0],ip[1]);
                     if(success)
+                    {	
                     	textLabel.setText("Connected! Waiting for host...");
+                    	hostBtn.setTouchable(Touchable.disabled);
+                    	hostBtn.setColor(.5f,.5f,.5f,1f);
+                    } 
                     else
                     	textLabel.setText("Failed to connect!");
                 }
@@ -144,7 +153,6 @@ public class ChessMainMenu implements Screen {
         startGameBtn.setVisible(false);
         startGameBtn.addListener( new ClickListener(){
             public void clicked(InputEvent event, float x, float y){
-            	startGame = true;
             	if(controller.isHostAndHasClientConnection())
             		startGame = true;
             	else

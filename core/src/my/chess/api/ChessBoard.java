@@ -108,6 +108,10 @@ public class ChessBoard {
 		
 		if(playerMoving != nextPlayerTurn)
 			return false;
+		
+		if(isKingCheckMate(1) || isKingCheckMate(2))
+			return false;
+		
 
 		//Checks if move is legal, if its not, disallow it
         ArrayList<int[]> legalMoves = GetLegalMoves(fromX,fromY);
@@ -140,14 +144,12 @@ public class ChessBoard {
 		if(isKingChecked(1))
 			if(isKingCheckMate(1))
 				for(ChessBoardChangeListener c : changeListeners)
-					c.OnPlayerWin(1);
+					c.OnPlayerWin(2);
 		
 		if(isKingChecked(2))
 			if(isKingCheckMate(2))
 				for(ChessBoardChangeListener c : changeListeners)
-					c.OnPlayerWin(2);
-			
-		
+					c.OnPlayerWin(1);
 		
 		if(nextPlayerTurn == 1)
 			nextPlayerTurn = 2;
