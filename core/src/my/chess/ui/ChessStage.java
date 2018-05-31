@@ -1,7 +1,5 @@
 package my.chess.ui;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,14 +9,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-
 import my.chess.api.ChessBoard;
 import my.chess.logic.ChessUIController;
+
+import java.util.ArrayList;
 
 public class ChessStage implements Screen {
 
@@ -68,7 +65,9 @@ public class ChessStage implements Screen {
 		turnText.setVisible(true);
 		turnText.setZIndex(1);
 		stage.addActor(turnText);
-		
+
+
+
 		Label sideText = new Label("You", skin);
 		Label sideText2 = new Label("Other player", skin);
 		
@@ -105,10 +104,9 @@ public class ChessStage implements Screen {
 			}
 		});
 		stage.addActor(cb);
-		
 		stage.addActor(sideText);
 		stage.addActor(sideText2);
-		
+
 		this.controller = controller;
 		
 		loadChessPieces();
@@ -295,7 +293,37 @@ public class ChessStage implements Screen {
 	{
 		turnText.setText(text);
 	}
-	
+
+	public void thisMethodIsCalledWhenThePlayerEitherWinsOrLosesAndTheResultChangesDependingOnResultOfTheGame(boolean win){
+
+	    String message1;
+
+	    if(win){
+            message1 = "You are a national fucking hero, you know that?";
+
+        } else {
+	        message1 = "You are fucking trash, you piece of human waste!";
+        }
+
+        VerticalGroup resultGroup = new VerticalGroup();
+        Label resultLabel = new Label(message1,skin);
+        TextButton resultButton = new TextButton("Restart!",skin);
+
+        resultButton.addListener( new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                //@TODO Do something when clicking button?
+            }
+        });
+
+        resultGroup.addActor(resultLabel);
+        resultGroup.addActor(resultButton);
+        resultGroup.setX(640-(resultGroup.getWidth()/2));
+        resultGroup.setY(480-(resultGroup.getHeight()/2));
+        resultGroup.setZIndex(9999);
+        stage.addActor(resultGroup);
+
+    }
+
 	@Override public void show() { Gdx.input.setInputProcessor(stage); }
 	
 	@Override
