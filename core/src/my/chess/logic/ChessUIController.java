@@ -194,10 +194,10 @@ public class ChessUIController implements ChessBoardChangeListener {
 
         if (index == connection.GetPlayerIndex()){
             System.out.println("You won!");
-            chess.thisMethodIsCalledWhenThePlayerEitherWinsOrLosesAndTheResultChangesDependingOnResultOfTheGame(true);
+            chess.resultScreen(true);
         }else{
             System.out.println("You lost!");
-            chess.thisMethodIsCalledWhenThePlayerEitherWinsOrLosesAndTheResultChangesDependingOnResultOfTheGame(false);
+            chess.resultScreen(false);
         }
 
         gameOver = true;
